@@ -9,7 +9,20 @@
       content="Extrae datos de facturas con IA, revísalos y descárgalos en Excel o PDF."
     />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121a16" media="(prefers-color-scheme: dark)" />
     <title>Invoice Extractor</title>
+    <script>
+      // Apply the dark theme before first paint to avoid a flash. Manual toggle: FRT-APP-0011.
+      ;(function () {
+        var media = window.matchMedia('(prefers-color-scheme: dark)')
+        function apply() {
+          document.documentElement.classList.toggle('dark', media.matches)
+        }
+        apply()
+        media.addEventListener('change', apply)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
