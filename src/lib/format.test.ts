@@ -1,3 +1,4 @@
+import { formatBytes } from './bytes'
 import { formatDate } from './dates'
 import { resolveIntlLocale } from './locale'
 import { formatMoney, formatPercent, isDecimalString } from './money'
@@ -79,5 +80,17 @@ describe('resolveIntlLocale', () => {
   it('uses the bare language otherwise', () => {
     expect(resolveIntlLocale('es', ['fr-FR'])).toBe('es')
     expect(resolveIntlLocale('en', [])).toBe('en')
+  })
+})
+
+describe('formatBytes', () => {
+  it.each([
+    [0, 'en', '0 byte'],
+    [512, 'en', '512 byte'],
+    [63_116, 'en', '62 kB'],
+    [1_258_291, 'es', '1,2 MB'],
+    [10 * 1024 * 1024, 'en', '10 MB'],
+  ])('%i bytes in %s → %s', (bytes, locale, expected) => {
+    expect(plain(formatBytes(bytes, locale))).toBe(expected)
   })
 })
