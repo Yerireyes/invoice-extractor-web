@@ -1,0 +1,115 @@
+{
+  "app": {
+    "name": "Invoice Extractor",
+    "skipToContent": "Skip to content"
+  },
+  "language": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again in a moment.",
+    "TOO_MANY_FILES_one": "You can upload at most {{count}} file at a time.",
+    "TOO_MANY_FILES_other": "You can upload at most {{count}} files at a time.",
+    "TOO_MANY_FILES": "You selected too many files. Upload fewer at a time.",
+    "NO_FILES": "No file was sent. Select at least one invoice.",
+    "TOO_MANY_INVOICES": "There are too many invoices to export together. Select fewer.",
+    "VALIDATION_ERROR": "The data sent is not valid. Check the invoice and try again.",
+    "PROVIDER_NOT_AVAILABLE": "The selected AI service is not available right now.",
+    "NOT_FOUND": "We couldn't find what you were looking for on the server.",
+    "METHOD_NOT_ALLOWED": "The server doesn't support this operation.",
+    "RATE_LIMITED_one": "Too many requests. Wait {{count}} second and try again.",
+    "RATE_LIMITED_other": "Too many requests. Wait {{count}} seconds and try again.",
+    "RATE_LIMITED": "Too many requests. Wait a moment and try again.",
+    "LLM_QUOTA_EXCEEDED": "The AI service quota is used up for now. Try again later.",
+    "LLM_UNAVAILABLE": "The AI service isn't responding. Try again in a few minutes.",
+    "INTERNAL_ERROR": "Unexpected server error. Try again later.",
+    "NETWORK_ERROR": "Can't reach the server. Check your internet connection.",
+    "UNKNOWN_ERROR": "The server returned an unexpected error. Try again."
+  },
+  "fileErrors": {
+    "generic": "We couldn't process this file.",
+    "NOT_AN_INVOICE": "This doesn't look like an invoice or a receipt.",
+    "UNREADABLE_FILE": "Can't read it: the image is blurry, cropped or damaged.",
+    "UNSUPPORTED_FILE_TYPE": "Unsupported format. Use JPG, PNG, WEBP or PDF.",
+    "FILE_TOO_LARGE": "The file exceeds the maximum allowed size.",
+    "PDF_TOO_MANY_PAGES": "The PDF has more pages than allowed.",
+    "EXTRACTION_FAILED": "The AI couldn't extract the data. Try again or use a sharper image."
+  },
+  "issues": {
+    "generic": "There is a problem with this field.",
+    "MISSING_REQUIRED_FIELD": "A required field is missing: {{field}}.",
+    "INVALID_CURRENCY": "“{{value}}” is not a valid currency code (for example: USD, EUR, MXN).",
+    "TOTAL_MISMATCH": "The total doesn't add up: based on the subtotal, discounts and taxes it should be {{expected}}, but it is {{actual}}.",
+    "SUBTOTAL_MISMATCH": "The subtotal doesn't add up: the line items sum to {{expected}}, but the subtotal is {{actual}}.",
+    "LINE_AMOUNT_MISMATCH": "Line {{line}}: the amount should be {{expected}} (quantity × price − discount), but it is {{actual}}.",
+    "TAX_MISMATCH": "Tax {{number}}: the amount should be {{expected}} (base × rate), but it is {{actual}}.",
+    "DUE_BEFORE_ISSUE": "The due date is earlier than the issue date.",
+    "FUTURE_DATE": "The issue date is later than today.",
+    "LOW_CONFIDENCE": "The AI isn't sure about this field ({{confidence}} confidence). Check it against the original image."
+  },
+  "severity": {
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Notice"
+  },
+  "validationStatus": {
+    "valid": "Valid",
+    "warnings": "With warnings",
+    "invalid": "With errors"
+  },
+  "documentType": {
+    "invoice": "Invoice",
+    "receipt": "Receipt",
+    "credit_note": "Credit note",
+    "other": "Other"
+  },
+  "fields": {
+    "lineSuffix": "{{label}} (line {{number}})",
+    "taxSuffix": "{{label}} (tax {{number}})",
+    "document_type": "Document type",
+    "invoice_number": "Invoice number",
+    "issue_date": "Issue date",
+    "due_date": "Due date",
+    "currency": "Currency",
+    "country": "Country",
+    "language": "Document language",
+    "issuer": {
+      "name": "Issuer name",
+      "tax_id": "Issuer tax ID",
+      "tax_id_type": "Issuer tax ID type",
+      "address": "Issuer address",
+      "email": "Issuer email",
+      "phone": "Issuer phone"
+    },
+    "recipient": {
+      "name": "Recipient name",
+      "tax_id": "Recipient tax ID",
+      "tax_id_type": "Recipient tax ID type",
+      "address": "Recipient address",
+      "email": "Recipient email",
+      "phone": "Recipient phone"
+    },
+    "line_items": {
+      "description": "Description",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "unit_price": "Unit price",
+      "discount": "Discount",
+      "tax_rate": "Tax %",
+      "amount": "Amount"
+    },
+    "subtotal": "Subtotal",
+    "discount_total": "Discounts",
+    "taxes": {
+      "name": "Tax",
+      "rate": "Rate",
+      "base": "Base",
+      "amount": "Tax amount"
+    },
+    "total": "Total",
+    "payment_method": "Payment method",
+    "notes": "Notes"
+  }
+}

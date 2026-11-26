@@ -1,0 +1,115 @@
+{
+  "app": {
+    "name": "Invoice Extractor",
+    "skipToContent": "Saltar al contenido"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "English"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo en unos momentos.",
+    "TOO_MANY_FILES_one": "Puedes subir como máximo {{count}} archivo a la vez.",
+    "TOO_MANY_FILES_other": "Puedes subir como máximo {{count}} archivos a la vez.",
+    "TOO_MANY_FILES": "Has seleccionado demasiados archivos. Sube menos a la vez.",
+    "NO_FILES": "No se envió ningún archivo. Selecciona al menos una factura.",
+    "TOO_MANY_INVOICES": "Hay demasiadas facturas para exportarlas juntas. Selecciona menos.",
+    "VALIDATION_ERROR": "Los datos enviados no son válidos. Revisa la factura e inténtalo de nuevo.",
+    "PROVIDER_NOT_AVAILABLE": "El servicio de IA elegido no está disponible ahora mismo.",
+    "NOT_FOUND": "No encontramos lo que buscabas en el servidor.",
+    "METHOD_NOT_ALLOWED": "El servidor no admite esta operación.",
+    "RATE_LIMITED_one": "Has hecho demasiadas peticiones. Espera {{count}} segundo y vuelve a intentarlo.",
+    "RATE_LIMITED_other": "Has hecho demasiadas peticiones. Espera {{count}} segundos y vuelve a intentarlo.",
+    "RATE_LIMITED": "Has hecho demasiadas peticiones. Espera un momento y vuelve a intentarlo.",
+    "LLM_QUOTA_EXCEEDED": "Se agotó la cuota del servicio de IA por ahora. Vuelve a intentarlo más tarde.",
+    "LLM_UNAVAILABLE": "El servicio de IA no responde. Vuelve a intentarlo en unos minutos.",
+    "INTERNAL_ERROR": "Error inesperado en el servidor. Vuelve a intentarlo más tarde.",
+    "NETWORK_ERROR": "No hay conexión con el servidor. Comprueba tu conexión a internet.",
+    "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo."
+  },
+  "fileErrors": {
+    "generic": "No pudimos procesar este archivo.",
+    "NOT_AN_INVOICE": "No parece una factura ni un recibo.",
+    "UNREADABLE_FILE": "No se puede leer: la imagen está borrosa, cortada o dañada.",
+    "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa JPG, PNG, WEBP o PDF.",
+    "FILE_TOO_LARGE": "El archivo supera el tamaño máximo permitido.",
+    "PDF_TOO_MANY_PAGES": "El PDF tiene más páginas de las permitidas.",
+    "EXTRACTION_FAILED": "La IA no pudo extraer los datos. Prueba de nuevo o con una imagen más nítida."
+  },
+  "issues": {
+    "generic": "Hay un problema con este dato.",
+    "MISSING_REQUIRED_FIELD": "Falta un dato obligatorio: {{field}}.",
+    "INVALID_CURRENCY": "«{{value}}» no es un código de moneda válido (por ejemplo: MXN, EUR, USD).",
+    "TOTAL_MISMATCH": "El total no cuadra: según el subtotal, los descuentos y los impuestos debería ser {{expected}}, pero es {{actual}}.",
+    "SUBTOTAL_MISMATCH": "El subtotal no cuadra: la suma de los conceptos es {{expected}}, pero el subtotal es {{actual}}.",
+    "LINE_AMOUNT_MISMATCH": "Concepto {{line}}: el importe debería ser {{expected}} (cantidad × precio − descuento), pero es {{actual}}.",
+    "TAX_MISMATCH": "Impuesto {{number}}: el importe debería ser {{expected}} (base × tasa), pero es {{actual}}.",
+    "DUE_BEFORE_ISSUE": "La fecha de vencimiento es anterior a la fecha de emisión.",
+    "FUTURE_DATE": "La fecha de emisión es posterior a hoy.",
+    "LOW_CONFIDENCE": "La IA no está segura de este dato ({{confidence}} de confianza). Revísalo con la imagen original."
+  },
+  "severity": {
+    "error": "Error",
+    "warning": "Advertencia",
+    "info": "Aviso"
+  },
+  "validationStatus": {
+    "valid": "Válida",
+    "warnings": "Con advertencias",
+    "invalid": "Con errores"
+  },
+  "documentType": {
+    "invoice": "Factura",
+    "receipt": "Recibo",
+    "credit_note": "Nota de crédito",
+    "other": "Otro"
+  },
+  "fields": {
+    "lineSuffix": "{{label}} (concepto {{number}})",
+    "taxSuffix": "{{label}} (impuesto {{number}})",
+    "document_type": "Tipo de documento",
+    "invoice_number": "Número de factura",
+    "issue_date": "Fecha de emisión",
+    "due_date": "Fecha de vencimiento",
+    "currency": "Moneda",
+    "country": "País",
+    "language": "Idioma del documento",
+    "issuer": {
+      "name": "Nombre del emisor",
+      "tax_id": "ID fiscal del emisor",
+      "tax_id_type": "Tipo de ID fiscal del emisor",
+      "address": "Dirección del emisor",
+      "email": "Correo del emisor",
+      "phone": "Teléfono del emisor"
+    },
+    "recipient": {
+      "name": "Nombre del receptor",
+      "tax_id": "ID fiscal del receptor",
+      "tax_id_type": "Tipo de ID fiscal del receptor",
+      "address": "Dirección del receptor",
+      "email": "Correo del receptor",
+      "phone": "Teléfono del receptor"
+    },
+    "line_items": {
+      "description": "Descripción",
+      "quantity": "Cantidad",
+      "unit": "Unidad",
+      "unit_price": "Precio unitario",
+      "discount": "Descuento",
+      "tax_rate": "% de impuesto",
+      "amount": "Importe"
+    },
+    "subtotal": "Subtotal",
+    "discount_total": "Descuentos",
+    "taxes": {
+      "name": "Impuesto",
+      "rate": "Tasa",
+      "base": "Base",
+      "amount": "Importe del impuesto"
+    },
+    "total": "Total",
+    "payment_method": "Método de pago",
+    "notes": "Notas"
+  }
+}

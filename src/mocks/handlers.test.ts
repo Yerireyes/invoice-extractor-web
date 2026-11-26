@@ -135,7 +135,7 @@ describe('mock /exports', () => {
     await expect(apiFetch('/exports/pdf', { method: 'POST', json: body })).rejects.toMatchObject({
       status: 422,
       code: 'TOO_MANY_INVOICES',
-      params: { max: 100 },
+      params: { max_invoices: 100 },
     })
   })
 

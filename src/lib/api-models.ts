@@ -31,4 +31,5 @@ export type ValidateResponse = Schemas['ValidateResponse']
 export type ExportRequest = Schemas['ExportRequest']
 export type ExportOptions = Schemas['ExportOptions']
 
-export type ProblemDetails = Schemas['ProblemDetails']
+export type ProblemDetail = Schemas['ProblemDetail']
+export type ErrorCode = Schemas['ErrorCode']

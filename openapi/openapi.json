@@ -2,23 +2,34 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Invoice Extractor API",
-    "version": "1.0.0",
-    "description": "PROVISIONAL: derived by the frontend from buzon/contrato/api-contract.md until the backend publishes its generated openapi.json.",
-    "x-provisional": true
+    "summary": "Extrae datos de facturas de cualquier país con IA y los exporta a Excel y PDF.",
+    "version": "0.1.0"
   },
   "paths": {
     "/api/v1/health": {
       "get": {
-        "operationId": "health",
-        "summary": "Health check",
-        "tags": ["service"],
+        "tags": [
+          "service"
+        ],
+        "summary": "Comprobación de salud",
+        "operationId": "health_api_v1_health_get",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -28,16 +39,28 @@
     },
     "/api/v1/meta": {
       "get": {
-        "operationId": "getMeta",
-        "summary": "Limits, formats, providers and export languages",
-        "tags": ["service"],
+        "tags": [
+          "service"
+        ],
+        "summary": "Límites, formatos aceptados, proveedores e idiomas de exportación",
+        "operationId": "meta_api_v1_meta_get",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MetaResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -49,7 +72,9 @@
       "post": {
         "operationId": "extractInvoices",
         "summary": "Extract invoices from 1..N files (partial success allowed)",
-        "tags": ["invoices"],
+        "tags": [
+          "invoices"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -76,7 +101,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -86,7 +111,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -96,7 +121,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -106,7 +131,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -116,19 +141,22 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
           }
-        }
+        },
+        "x-provisional": true
       }
     },
     "/api/v1/invoices/validate": {
       "post": {
         "operationId": "validateInvoice",
         "summary": "Re-validate an edited invoice",
-        "tags": ["invoices"],
+        "tags": [
+          "invoices"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -155,7 +183,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -165,7 +193,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -175,19 +203,22 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
           }
-        }
+        },
+        "x-provisional": true
       }
     },
     "/api/v1/exports/excel": {
       "post": {
         "operationId": "exportExcel",
         "summary": "Invoices → .xlsx",
-        "tags": ["exports"],
+        "tags": [
+          "exports"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -222,7 +253,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -232,7 +263,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -242,19 +273,22 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
           }
-        }
+        },
+        "x-provisional": true
       }
     },
     "/api/v1/exports/pdf": {
       "post": {
         "operationId": "exportPdf",
         "summary": "Invoices → .pdf (one invoice per page)",
-        "tags": ["exports"],
+        "tags": [
+          "exports"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -289,7 +323,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -299,7 +333,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
@@ -309,28 +343,74 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ProblemDetail"
                 }
               }
             }
           }
-        }
+        },
+        "x-provisional": true
       }
     }
   },
   "components": {
     "schemas": {
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "TOO_MANY_FILES",
+          "NO_FILES",
+          "TOO_MANY_INVOICES",
+          "VALIDATION_ERROR",
+          "PROVIDER_NOT_AVAILABLE",
+          "NOT_FOUND",
+          "METHOD_NOT_ALLOWED",
+          "RATE_LIMITED",
+          "LLM_QUOTA_EXCEEDED",
+          "LLM_UNAVAILABLE",
+          "INTERNAL_ERROR"
+        ],
+        "title": "ErrorCode",
+        "description": "Códigos de error HTTP del contrato (sección 5)."
+      },
+      "ExportLanguage": {
+        "type": "string",
+        "enum": [
+          "es",
+          "en"
+        ]
+      },
       "HealthResponse": {
-        "type": "object",
-        "required": ["status"],
         "properties": {
           "status": {
             "type": "string",
-            "const": "ok"
+            "const": "ok",
+            "title": "Status",
+            "default": "ok"
           }
-        }
+        },
+        "type": "object",
+        "title": "HealthResponse"
       },
       "Limits": {
+        "properties": {
+          "max_files_per_request": {
+            "type": "integer",
+            "title": "Max Files Per Request"
+          },
+          "max_file_size_mb": {
+            "type": "integer",
+            "title": "Max File Size Mb"
+          },
+          "max_pdf_pages": {
+            "type": "integer",
+            "title": "Max Pdf Pages"
+          },
+          "max_invoices_per_export": {
+            "type": "integer",
+            "title": "Max Invoices Per Export"
+          }
+        },
         "type": "object",
         "required": [
           "max_files_per_request",
@@ -338,81 +418,155 @@
           "max_pdf_pages",
           "max_invoices_per_export"
         ],
-        "properties": {
-          "max_files_per_request": {
-            "type": "integer"
-          },
-          "max_file_size_mb": {
-            "type": "integer"
-          },
-          "max_pdf_pages": {
-            "type": "integer"
-          },
-          "max_invoices_per_export": {
-            "type": "integer"
-          }
-        }
-      },
-      "ProviderId": {
-        "type": "string",
-        "enum": ["gemini", "ollama"]
-      },
-      "ProviderInfo": {
-        "type": "object",
-        "required": ["id", "available", "default"],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ProviderId"
-          },
-          "available": {
-            "type": "boolean"
-          },
-          "default": {
-            "type": "boolean"
-          }
-        }
-      },
-      "ExportLanguage": {
-        "type": "string",
-        "enum": ["es", "en"]
+        "title": "Limits"
       },
       "MetaResponse": {
-        "type": "object",
-        "required": ["version", "limits", "accepted_mime_types", "providers", "export_languages"],
         "properties": {
           "version": {
-            "type": "string"
+            "type": "string",
+            "title": "Version"
           },
           "limits": {
             "$ref": "#/components/schemas/Limits"
           },
           "accepted_mime_types": {
-            "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "type": "array",
+            "title": "Accepted Mime Types"
           },
           "providers": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ProviderInfo"
-            }
+            },
+            "type": "array",
+            "title": "Providers"
           },
           "export_languages": {
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExportLanguage"
-            }
+            },
+            "type": "array",
+            "title": "Export Languages"
           }
-        }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "limits",
+          "accepted_mime_types",
+          "providers",
+          "export_languages"
+        ],
+        "title": "MetaResponse"
+      },
+      "ProblemDetail": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "about:blank",
+            "examples": [
+              "about:blank"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "examples": [
+              "Unprocessable Content"
+            ]
+          },
+          "status": {
+            "type": "integer",
+            "title": "Status",
+            "examples": [
+              422
+            ]
+          },
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail",
+            "examples": [
+              "Max 10 files per request"
+            ]
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params",
+            "examples": [
+              {
+                "max_files": 10
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "status",
+          "code"
+        ],
+        "title": "ProblemDetail",
+        "description": "Cuerpo de error RFC 9457 extendido con `code` y `params`."
+      },
+      "ProviderId": {
+        "type": "string",
+        "enum": [
+          "gemini",
+          "ollama",
+          "fake"
+        ]
+      },
+      "ProviderInfo": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "default": {
+            "type": "boolean",
+            "title": "Default"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "available",
+          "default"
+        ],
+        "title": "ProviderInfo"
       },
       "DocumentType": {
         "type": "string",
-        "enum": ["invoice", "receipt", "credit_note", "other"]
+        "enum": [
+          "invoice",
+          "receipt",
+          "credit_note",
+          "other"
+        ],
+        "x-provisional": true
       },
       "Party": {
         "type": "object",
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "anyOf": [
@@ -480,11 +634,15 @@
             ],
             "description": "Phone"
           }
-        }
+        },
+        "x-provisional": true
       },
       "LineItem": {
         "type": "object",
-        "required": ["description", "amount"],
+        "required": [
+          "description",
+          "amount"
+        ],
         "properties": {
           "description": {
             "type": "string",
@@ -553,13 +711,21 @@
             "type": "string",
             "description": "quantity × unit_price − discount. Decimal string",
             "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": ["1160.00"]
+            "examples": [
+              "1160.00"
+            ]
           }
-        }
+        },
+        "x-provisional": true
       },
       "Tax": {
         "type": "object",
-        "required": ["name", "rate", "base", "amount"],
+        "required": [
+          "name",
+          "rate",
+          "base",
+          "amount"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -593,9 +759,12 @@
             "type": "string",
             "description": "Tax amount. Decimal string",
             "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": ["1160.00"]
+            "examples": [
+              "1160.00"
+            ]
           }
-        }
+        },
+        "x-provisional": true
       },
       "Invoice": {
         "type": "object",
@@ -643,7 +812,9 @@
           "currency": {
             "type": "string",
             "description": "ISO 4217",
-            "examples": ["MXN"]
+            "examples": [
+              "MXN"
+            ]
           },
           "country": {
             "anyOf": [
@@ -720,7 +891,9 @@
             "type": "string",
             "description": "Total. Decimal string",
             "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": ["1160.00"]
+            "examples": [
+              "1160.00"
+            ]
           },
           "payment_method": {
             "anyOf": [
@@ -744,15 +917,26 @@
             ],
             "description": "Notes"
           }
-        }
+        },
+        "x-provisional": true
       },
       "IssueSeverity": {
         "type": "string",
-        "enum": ["error", "warning", "info"]
+        "enum": [
+          "error",
+          "warning",
+          "info"
+        ],
+        "x-provisional": true
       },
       "Issue": {
         "type": "object",
-        "required": ["code", "severity", "field", "params"],
+        "required": [
+          "code",
+          "severity",
+          "field",
+          "params"
+        ],
         "properties": {
           "code": {
             "type": "string",
@@ -776,15 +960,24 @@
             "type": "object",
             "additionalProperties": true
           }
-        }
+        },
+        "x-provisional": true
       },
       "ValidationStatus": {
         "type": "string",
-        "enum": ["valid", "warnings", "invalid"]
+        "enum": [
+          "valid",
+          "warnings",
+          "invalid"
+        ],
+        "x-provisional": true
       },
       "Validation": {
         "type": "object",
-        "required": ["status", "issues"],
+        "required": [
+          "status",
+          "issues"
+        ],
         "properties": {
           "status": {
             "$ref": "#/components/schemas/ValidationStatus"
@@ -795,11 +988,17 @@
               "$ref": "#/components/schemas/Issue"
             }
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractionMeta": {
         "type": "object",
-        "required": ["provider", "model", "pages", "processing_ms"],
+        "required": [
+          "provider",
+          "model",
+          "pages",
+          "processing_ms"
+        ],
         "properties": {
           "provider": {
             "$ref": "#/components/schemas/ProviderId"
@@ -813,11 +1012,15 @@
           "processing_ms": {
             "type": "integer"
           }
-        }
+        },
+        "x-provisional": true
       },
       "FileError": {
         "type": "object",
-        "required": ["code", "params"],
+        "required": [
+          "code",
+          "params"
+        ],
         "properties": {
           "code": {
             "type": "string",
@@ -827,11 +1030,19 @@
             "type": "object",
             "additionalProperties": true
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractionSuccess": {
         "type": "object",
-        "required": ["file_name", "status", "invoice", "validation", "field_confidence", "meta"],
+        "required": [
+          "file_name",
+          "status",
+          "invoice",
+          "validation",
+          "field_confidence",
+          "meta"
+        ],
         "properties": {
           "file_name": {
             "type": "string"
@@ -857,11 +1068,16 @@
           "meta": {
             "$ref": "#/components/schemas/ExtractionMeta"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractionFailure": {
         "type": "object",
-        "required": ["file_name", "status", "error"],
+        "required": [
+          "file_name",
+          "status",
+          "error"
+        ],
         "properties": {
           "file_name": {
             "type": "string"
@@ -873,7 +1089,8 @@
           "error": {
             "$ref": "#/components/schemas/FileError"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractionResult": {
         "oneOf": [
@@ -890,11 +1107,16 @@
             "success": "#/components/schemas/ExtractionSuccess",
             "error": "#/components/schemas/ExtractionFailure"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractSummary": {
         "type": "object",
-        "required": ["total", "succeeded", "failed"],
+        "required": [
+          "total",
+          "succeeded",
+          "failed"
+        ],
         "properties": {
           "total": {
             "type": "integer"
@@ -905,11 +1127,15 @@
           "failed": {
             "type": "integer"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractResponse": {
         "type": "object",
-        "required": ["results", "summary"],
+        "required": [
+          "results",
+          "summary"
+        ],
         "properties": {
           "results": {
             "type": "array",
@@ -920,11 +1146,14 @@
           "summary": {
             "$ref": "#/components/schemas/ExtractSummary"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExtractRequest": {
         "type": "object",
-        "required": ["files"],
+        "required": [
+          "files"
+        ],
         "properties": {
           "files": {
             "type": "array",
@@ -936,29 +1165,40 @@
           "provider": {
             "$ref": "#/components/schemas/ProviderId"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ValidateRequest": {
         "type": "object",
-        "required": ["invoice"],
+        "required": [
+          "invoice"
+        ],
         "properties": {
           "invoice": {
             "$ref": "#/components/schemas/Invoice"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ValidateResponse": {
         "type": "object",
-        "required": ["validation"],
+        "required": [
+          "validation"
+        ],
         "properties": {
           "validation": {
             "$ref": "#/components/schemas/Validation"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExportOptions": {
         "type": "object",
-        "required": ["language", "include_line_items", "include_alerts"],
+        "required": [
+          "language",
+          "include_line_items",
+          "include_alerts"
+        ],
         "properties": {
           "language": {
             "$ref": "#/components/schemas/ExportLanguage"
@@ -969,11 +1209,15 @@
           "include_alerts": {
             "type": "boolean"
           }
-        }
+        },
+        "x-provisional": true
       },
       "ExportRequest": {
         "type": "object",
-        "required": ["invoices", "options"],
+        "required": [
+          "invoices",
+          "options"
+        ],
         "properties": {
           "invoices": {
             "type": "array",
@@ -984,34 +1228,8 @@
           "options": {
             "$ref": "#/components/schemas/ExportOptions"
           }
-        }
-      },
-      "ProblemDetails": {
-        "type": "object",
-        "required": ["type", "title", "status", "code", "params"],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "status": {
-            "type": "integer"
-          },
-          "code": {
-            "type": "string",
-            "description": "TOO_MANY_FILES | NO_FILES | TOO_MANY_INVOICES | VALIDATION_ERROR | PROVIDER_NOT_AVAILABLE | RATE_LIMITED | LLM_QUOTA_EXCEEDED | LLM_UNAVAILABLE | INTERNAL_ERROR"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "params": {
-            "type": "object",
-            "additionalProperties": true
-          }
         },
-        "description": "RFC 9457 Problem Details"
+        "x-provisional": true
       }
     }
   }
