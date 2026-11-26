@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- Fictional sample invoice (synthetic data). Rendered to public/samples/ejemplo-factura-luz-mx.png -->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; background: #d9d4cb; }
+      body { padding: 48px; font-family: Arial, Helvetica, sans-serif; color: #1d1d1b; }
+      .sheet {
+        box-sizing: border-box; width: 820px; margin: 0 auto; background: #fdfcf9; padding: 48px 56px 56px;
+        box-shadow: 0 18px 40px -18px rgba(40, 30, 10, 0.45); transform: rotate(-0.6deg);
+        position: relative;
+      }
+      .stamp { position: absolute; bottom: 26px; right: 36px; border: 2px solid #b42318; color: #b42318;
+        font-weight: 700; font-size: 13px; letter-spacing: 0.08em; padding: 4px 10px; transform: rotate(4deg); }
+      header { display: flex; justify-content: space-between; border-bottom: 3px solid #0f5132; padding-bottom: 18px; }
+      .brand { font-size: 26px; font-weight: 700; color: #0f5132; }
+      .muted { color: #5b5b57; font-size: 13px; line-height: 1.5; }
+      h2 { font-size: 15px; letter-spacing: 0.06em; margin: 0 0 6px; color: #0f5132; }
+      .meta { text-align: right; }
+      .meta strong { font-size: 20px; }
+      .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 26px 0; }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th { text-align: left; background: #e7f1ec; padding: 9px 10px; font-size: 12px; letter-spacing: 0.04em; }
+      td { padding: 10px; border-bottom: 1px solid #e2ded5; }
+      .num { text-align: right; font-variant-numeric: tabular-nums; }
+      .totals { width: 320px; margin: 22px 0 0 auto; font-size: 14px; }
+      .totals div { display: flex; justify-content: space-between; padding: 6px 0; }
+      .totals .grand { border-top: 2px solid #1d1d1b; font-size: 18px; font-weight: 700; margin-top: 6px; padding-top: 10px; }
+      footer { margin-top: 34px; border-top: 1px dashed #bdb7aa; padding-top: 14px; }
+    </style>
+  </head>
+  <body>
+    <div class="sheet">
+      <div class="stamp">EJEMPLO · DATOS FICTICIOS</div>
+      <header>
+        <div>
+          <div class="brand">Energía Ficticia del Norte</div>
+          <div class="muted">Energía Ficticia del Norte S.A. de C.V.<br />RFC: EFN010101AB1<br />Av. de los Ejemplos 123, Monterrey, N.L., México</div>
+        </div>
+        <div class="meta">
+          <h2>FACTURA</h2>
+          <strong>A-00123</strong>
+          <div class="muted">Fecha de emisión: 20/11/2026<br />Fecha límite de pago: 20/12/2026<br />Moneda: MXN</div>
+        </div>
+      </header>
+
+      <div class="parties">
+        <div>
+          <h2>CLIENTE</h2>
+          <div>Laura Martínez Ortega</div>
+          <div class="muted">RFC: MAOL850312XX0<br />Calle Imaginaria 45, Col. Centro, Monterrey</div>
+        </div>
+        <div>
+          <h2>SERVICIO</h2>
+          <div class="muted">No. de servicio: 0000 1234 5678<br />Periodo: 15/10/2026 – 14/11/2026<br />Tarifa doméstica</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>DESCRIPCIÓN</th><th class="num">CANTIDAD</th><th>UNIDAD</th><th class="num">PRECIO UNIT.</th><th class="num">IMPORTE</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Energía consumida, bloque básico</td><td class="num">150</td><td>kWh</td><td class="num">$4.00</td><td class="num">$600.00</td></tr>
+          <tr><td>Energía consumida, bloque intermedio</td><td class="num">80</td><td>kWh</td><td class="num">$4.50</td><td class="num">$360.00</td></tr>
+          <tr><td>Cargo fijo por servicio</td><td class="num">1</td><td>mes</td><td class="num">$40.00</td><td class="num">$40.00</td></tr>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div><span>Subtotal</span><span class="num">$1,000.00</span></div>
+        <div><span>IVA 16 %</span><span class="num">$160.00</span></div>
+        <div class="grand"><span>Total a pagar</span><span class="num">$1,160.00 MXN</span></div>
+      </div>
+
+      <footer class="muted">
+        Método de pago: Transferencia bancaria · Forma de pago: Pago en una sola exhibición<br />
+        Documento de ejemplo creado para Invoice Extractor. Empresa, personas y datos fiscales ficticios.
+      </footer>
+    </div>
+  </body>
+</html>

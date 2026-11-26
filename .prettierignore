@@ -8,3 +8,4 @@ public/mockServiceWorker.js
 .impeccable
 CLAUDE.md
 openapi/
+scripts/samples/*.html

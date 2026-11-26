@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- Fictional sample receipt (synthetic data). Rendered to public/samples/ejemplo-ticket-ferreteria-us.jpg -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; background: #6f6a62; }
+      body { padding: 48px 0 40px; }
+      .receipt {
+        width: 380px; margin: 0 auto; background: #fbfaf6; padding: 30px 26px 40px;
+        font-family: 'Courier New', Courier, monospace; font-size: 15px; color: #2a2a2a; line-height: 1.45;
+        transform: rotate(1.2deg); box-shadow: 0 22px 40px -16px rgba(0, 0, 0, 0.55);
+      }
+      .center { text-align: center; }
+      .big { font-size: 20px; font-weight: 700; letter-spacing: 0.04em; }
+      .sep { border-top: 1px dashed #777; margin: 12px 0; }
+      .line { display: flex; justify-content: space-between; }
+      .indent { padding-left: 14px; color: #555; }
+      .total { font-size: 19px; font-weight: 700; }
+      .stamp { border: 2px solid #9b1c1c; color: #9b1c1c; font-weight: 700; padding: 3px 6px; display: inline-block;
+        transform: rotate(-3deg); margin-bottom: 10px; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="receipt">
+      <div class="center"><span class="stamp">SAMPLE · FICTIONAL DATA</span></div>
+      <div class="center big">SAMPLE HARDWARE CO.</div>
+      <div class="center">500 Example Ave, Brooklyn, NY<br />EIN 12-3456789</div>
+      <div class="sep"></div>
+      <div class="line"><span>RECEIPT R-88213</span><span>10/28/2026</span></div>
+      <div class="line"><span>Register 2</span><span>14:37</span></div>
+      <div class="sep"></div>
+      <div>LED BULB 9W 4-PACK</div>
+      <div class="line indent"><span>3 @ 12.99</span><span>38.97</span></div>
+      <div>EXTENSION CORD 25FT</div>
+      <div class="line indent"><span>1 @ 24.50</span><span>24.50</span></div>
+      <div class="line indent"><span>COUPON</span><span>-2.00</span></div>
+      <div class="sep"></div>
+      <div class="line"><span>SUBTOTAL</span><span>61.47</span></div>
+      <div class="line"><span>SALES TAX 8.875%</span><span>5.46</span></div>
+      <div class="line total"><span>TOTAL USD</span><span>66.93</span></div>
+      <div class="sep"></div>
+      <div class="line"><span>VISA **** 0000</span><span>66.93</span></div>
+      <div class="sep"></div>
+      <div class="center">Sample receipt made for Invoice Extractor.<br />Store and data are fictional.</div>
+    </div>
+  </body>
+</html>

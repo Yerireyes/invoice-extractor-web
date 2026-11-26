@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- Fictional sample invoice (synthetic data). Printed to public/samples/ejemplo-estudio-diseno-es.pdf -->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @page { size: A4; margin: 0; }
+      html, body { margin: 0; }
+      body { font-family: Georgia, 'Times New Roman', serif; color: #222; }
+      .page { padding: 56px 64px; position: relative; min-height: 1000px; }
+      .stamp { position: absolute; top: 26px; right: 40px; font-family: Arial, sans-serif; font-size: 11px;
+        letter-spacing: 0.12em; color: #8a1c1c; border: 1.5px solid #8a1c1c; padding: 3px 8px; }
+      h1 { font-weight: 400; font-size: 34px; margin: 0; letter-spacing: -0.01em; }
+      .sub { font-family: Arial, sans-serif; font-size: 12px; color: #666; line-height: 1.6; }
+      .row { display: flex; justify-content: space-between; margin-top: 36px; }
+      .label { font-family: Arial, sans-serif; font-size: 10px; letter-spacing: 0.14em; color: #888; margin-bottom: 6px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 14px; }
+      th { font-family: Arial, sans-serif; font-size: 10px; letter-spacing: 0.12em; color: #888; text-align: left;
+        border-bottom: 1px solid #222; padding: 8px 6px; font-weight: 400; }
+      td { padding: 12px 6px; border-bottom: 1px solid #ddd; }
+      .num { text-align: right; font-variant-numeric: tabular-nums; }
+      .totals { width: 300px; margin: 28px 0 0 auto; font-size: 14px; }
+      .totals div { display: flex; justify-content: space-between; padding: 5px 0; }
+      .grand { border-top: 1px solid #222; margin-top: 8px; padding-top: 10px !important; font-size: 20px; }
+      .foot { position: absolute; bottom: 48px; left: 64px; right: 64px; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="stamp">EJEMPLO · DATOS FICTICIOS</div>
+      <h1>Estudio Ejemplo Diseño</h1>
+      <div class="sub">Estudio Ejemplo Diseño S.L. · NIF B12345678<br />Calle Imaginaria 7, 28001 Madrid, España · +34 910 000 000</div>
+
+      <div class="row">
+        <div>
+          <div class="label">FACTURAR A</div>
+          <div>Ficción Digital S.A.</div>
+          <div class="sub">NIF A87654321<br />Paseo de la Muestra 42, 08001 Barcelona</div>
+        </div>
+        <div style="text-align: right">
+          <div class="label">FACTURA</div>
+          <div style="font-size: 20px">2026/0457</div>
+          <div class="sub">Fecha: 3 de noviembre de 2026<br />Vencimiento: 3 de diciembre de 2026</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>CONCEPTO</th><th class="num">CANT.</th><th class="num">PRECIO</th><th class="num">IVA</th><th class="num">IMPORTE</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Diseño de identidad visual</td><td class="num">1</td><td class="num">1.200,00 €</td><td class="num">21 %</td><td class="num">1.200,00 €</td></tr>
+          <tr><td>Adaptación a redes sociales</td><td class="num">4</td><td class="num">75,00 €</td><td class="num">21 %</td><td class="num">300,00 €</td></tr>
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div><span>Base imponible</span><span class="num">1.500,00 €</span></div>
+        <div><span>IVA 21 %</span><span class="num">315,00 €</span></div>
+        <div><span>Retención IRPF −15 %</span><span class="num">−225,00 €</span></div>
+        <div class="grand"><span>Total</span><span class="num">1.590,00 €</span></div>
+      </div>
+
+      <div class="foot sub">
+        Forma de pago: transferencia bancaria a 30 días.<br />
+        Documento de ejemplo creado para Invoice Extractor. Empresas y datos fiscales ficticios.
+      </div>
+    </div>
+  </body>
+</html>
