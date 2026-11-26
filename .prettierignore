@@ -1,0 +1,9 @@
+dist
+coverage
+node_modules
+package-lock.json
+src/lib/api-types.ts
+public/mockServiceWorker.js
+.claude
+.impeccable
+CLAUDE.md
