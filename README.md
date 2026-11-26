@@ -1,5 +1,7 @@
 # Invoice Extractor — Web
 
+[![CI](https://github.com/Yerireyes/invoice-extractor-web/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Yerireyes/invoice-extractor-web/actions/workflows/ci.yml)
+
 Aplicación web para extraer datos de facturas con IA: subes fotos o PDFs, revisas y corriges lo que extrajo el modelo con la imagen original al lado, y descargas el resultado en **Excel** o **PDF**.
 
 Es el frontend de [`invoice-extractor-api`](https://github.com/Yerireyes/invoice-extractor-api). Las facturas **no se almacenan**: viven solo en la memoria del navegador durante la sesión.

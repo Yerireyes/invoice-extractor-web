@@ -1,0 +1,30 @@
+name: Branch name
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+permissions: {}
+
+jobs:
+  validate:
+    name: Validar nombre de rama
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Comprobar formato <tipo>/<modulo>/frt-<mod>-<NNNN>
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          # Ramas automáticas (Dependabot, release-please) quedan exentas
+          if [[ "$BRANCH" =~ ^dependabot/ || "$BRANCH" =~ ^release-please-- ]]; then
+            echo "Rama automática '$BRANCH': se omite la validación."
+            exit 0
+          fi
+          PATTERN='^(feat|fix|chore|refactor)/[a-z0-9-]+/frt-[a-z]{3}-[0-9]{4}$'
+          if [[ "$BRANCH" =~ $PATTERN ]]; then
+            echo "Nombre de rama válido: $BRANCH"
+          else
+            echo "::error::Nombre de rama inválido: '$BRANCH'. Formato esperado: <tipo>/<modulo>/frt-<mod>-<NNNN> (ej. feat/upload/frt-upl-0005)"
+            exit 1
+          fi
