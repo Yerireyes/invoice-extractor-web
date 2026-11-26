@@ -28,6 +28,14 @@ jobs:
 
       - run: npm ci --no-audit --no-fund
 
+      - name: Tipos de la API al día con openapi/openapi.json
+        run: |
+          npm run gen:api
+          git diff --exit-code -- src/lib/api-types.ts || {
+            echo "::error file=src/lib/api-types.ts::Los tipos generados no coinciden con openapi/openapi.json. Ejecuta 'npm run gen:api' y commitea el resultado."
+            exit 1
+          }
+
       - name: ESLint
         run: npm run lint
 

@@ -62,6 +62,28 @@ docker compose up --build   # http://localhost:8080
 
 Son variables de **build**: Vite las incrusta en el bundle, así que son públicas. Nunca pongas secretos en ellas.
 
+## Modo mock
+
+`npm run dev:mock` usa [MSW](https://mswjs.io) para simular **todos** los endpoints del contrato con facturas ficticias en varias monedas (MXN, EUR, USD, GBP), impuestos, issues de validación y latencia simulada. La validación también se simula, así que los issues cambian al editar.
+
+Algunos nombres de archivo disparan escenarios de error:
+
+| El nombre contiene           | Resultado                                           |
+| ---------------------------- | --------------------------------------------------- |
+| `perro`, `dog`, `no-factura` | Ese archivo falla con `NOT_AN_INVOICE`              |
+| `borrosa`, `blurry`          | Ese archivo falla con `UNREADABLE_FILE`             |
+| `rate-limit`                 | Toda la petición: `429 RATE_LIMITED` (esperar 30 s) |
+| `quota`                      | Toda la petición: `503 LLM_QUOTA_EXCEEDED`          |
+| `offline`                    | Toda la petición: `503 LLM_UNAVAILABLE`             |
+
+MSW solo entra en el build cuando `VITE_USE_MOCKS=true`; el bundle de producción no lo incluye.
+
+## Contrato de la API
+
+Los tipos de `src/lib/api-types.ts` se **generan** desde `openapi/openapi.json` con `npm run gen:api` (el CI falla si no están al día). El contrato lo publica el backend.
+
+> **Provisional:** mientras el backend no publique su `openapi.json`, el de este repo está escrito a partir de `api-contract.md` (`info.x-provisional: true`).
+
 ## Estructura
 
 ```

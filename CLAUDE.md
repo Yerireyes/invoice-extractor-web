@@ -218,8 +218,8 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 | ID | Rama | Estado |
 |---|---|---|
 | FRT-APP-0001 | `chore/app/frt-app-0001` | hecha |
-| FRT-APP-0002 | `chore/app/frt-app-0002` | en curso |
-| FRT-APP-0003 | `feat/app/frt-app-0003` | pendiente |
+| FRT-APP-0002 | `chore/app/frt-app-0002` | hecha |
+| FRT-APP-0003 | `feat/app/frt-app-0003` | en curso |
 | FRT-LNG-0004 | `feat/i18n/frt-lng-0004` | pendiente |
 | FRT-UPL-0005 | `feat/upload/frt-upl-0005` | pendiente |
 | FRT-UPL-0006 | `feat/upload/frt-upl-0006` | pendiente |
