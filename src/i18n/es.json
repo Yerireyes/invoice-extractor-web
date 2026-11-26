@@ -26,7 +26,13 @@
     "LLM_UNAVAILABLE": "El servicio de IA no responde. Vuelve a intentarlo en unos minutos.",
     "INTERNAL_ERROR": "Error inesperado en el servidor. Vuelve a intentarlo más tarde.",
     "NETWORK_ERROR": "No hay conexión con el servidor. Comprueba tu conexión a internet.",
-    "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo."
+    "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo.",
+    "TOO_MANY_INVOICES_one": "Puedes exportar como máximo {{count}} factura a la vez. Selecciona menos.",
+    "TOO_MANY_INVOICES_other": "Puedes exportar como máximo {{count}} facturas a la vez. Selecciona menos.",
+    "LLM_QUOTA_EXCEEDED_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundo.",
+    "LLM_QUOTA_EXCEEDED_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundos.",
+    "LLM_UNAVAILABLE_one": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundo.",
+    "LLM_UNAVAILABLE_other": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundos."
   },
   "fileErrors": {
     "generic": "No pudimos procesar este archivo.",
@@ -35,7 +41,11 @@
     "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa JPG, PNG, WEBP o PDF.",
     "FILE_TOO_LARGE": "El archivo supera el tamaño máximo permitido.",
     "PDF_TOO_MANY_PAGES": "El PDF tiene más páginas de las permitidas.",
-    "EXTRACTION_FAILED": "La IA no pudo extraer los datos. Prueba de nuevo o con una imagen más nítida."
+    "EXTRACTION_FAILED": "La IA no pudo extraer los datos. Prueba de nuevo o con una imagen más nítida.",
+    "FILE_TOO_LARGE_one": "El archivo supera el máximo de {{count}} MB.",
+    "FILE_TOO_LARGE_other": "El archivo supera el máximo de {{count}} MB.",
+    "PDF_TOO_MANY_PAGES_detail_one": "El PDF tiene {{pages}} páginas y el máximo es {{count}}.",
+    "PDF_TOO_MANY_PAGES_detail_other": "El PDF tiene {{pages}} páginas y el máximo es {{count}}."
   },
   "issues": {
     "generic": "Hay un problema con este dato.",

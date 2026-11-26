@@ -14,20 +14,39 @@ export function translateApiError(t: TFunction, error: unknown): string {
   const code = isApiError(error) ? error.code : CLIENT_ERROR_CODES.unknown
   const params = isApiError(error) ? error.params : {}
 
-  // Only the params the contract guarantees are interpolated; others use the generic wording.
-  const count =
-    code === 'RATE_LIMITED'
-      ? asNumber(params.retry_after_s)
-      : code === 'TOO_MANY_FILES'
-        ? asNumber(params.max_files)
-        : undefined
+  // The numeric param each code carries (contract section 5). When it is present the message
+  // uses the plural forms (_one/_other) with {{count}}; otherwise, the generic wording.
+  const countParam = HTTP_COUNT_PARAMS[code]
+  const count = countParam ? asNumber(params[countParam]) : undefined
 
   return t([`errors.${code}`, 'errors.generic'], count === undefined ? {} : { count })
 }
 
-/** Text for a per-file error inside /extract results. */
+const HTTP_COUNT_PARAMS: Partial<Record<string, string>> = {
+  TOO_MANY_FILES: 'max_files',
+  TOO_MANY_INVOICES: 'max_invoices',
+  RATE_LIMITED: 'retry_after_s',
+  LLM_QUOTA_EXCEEDED: 'retry_after_s', // optional
+  LLM_UNAVAILABLE: 'retry_after_s', // optional
+}
+
+/** Text for a per-file error inside /extract results (contract section 2.2). */
 export function translateFileError(t: TFunction, error: FileError): string {
-  return t([`fileErrors.${error.code}`, 'fileErrors.generic'])
+  const keys = [`fileErrors.${error.code}`, 'fileErrors.generic']
+  const params = error.params
+
+  if (error.code === 'FILE_TOO_LARGE') {
+    const count = asNumber(params.max_mb)
+    if (count !== undefined) return t(keys, { count })
+  }
+  if (error.code === 'PDF_TOO_MANY_PAGES') {
+    const count = asNumber(params.max_pages)
+    const pages = asNumber(params.pages)
+    if (count !== undefined && pages !== undefined) {
+      return t(['fileErrors.PDF_TOO_MANY_PAGES_detail', ...keys], { count, pages })
+    }
+  }
+  return t(keys)
 }
 
 /**
@@ -69,6 +88,8 @@ export function translateIssue(
   if (typeof params.confidence === 'number') {
     params.confidence = formatPercent(params.confidence, locale, { ratio: true })
   }
+  // `line` and `index` are 0-based in the contract; people count from 1.
+  if (typeof params.line === 'number') params.line = params.line + 1
   if (typeof params.index === 'number') params.number = params.index + 1
   params.field = issue.field ? fieldLabel(t, issue.field) : ''
 

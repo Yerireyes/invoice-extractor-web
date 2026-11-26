@@ -1,11 +1,12 @@
 import { delay, http, HttpResponse } from 'msw'
+import { normalizeInvoice } from '@/lib/api-models'
 import type {
   ExportRequest,
   ExtractionResult,
   ExtractResponse,
   FileError,
   ErrorCode,
-  ProblemDetail,
+  ProblemDetails,
   ValidateRequest,
   ValidateResponse,
 } from '@/lib/api-models'
@@ -38,7 +39,7 @@ function problem(
   params: Record<string, unknown> = {},
   headers?: HeadersInit,
 ) {
-  const body: ProblemDetail = {
+  const body: ProblemDetails = {
     type: 'about:blank',
     title: REASON_PHRASES[status] ?? 'Error',
     status,
@@ -72,7 +73,7 @@ function fileError(file: File): FileError | null {
   if (!accepted_mime_types.includes(file.type)) {
     return {
       code: 'UNSUPPORTED_FILE_TYPE',
-      params: { mime_type: file.type, accepted: accepted_mime_types },
+      params: { mime_type: file.type || null },
     }
   }
   if (file.size > limits.max_file_size_mb * 1024 * 1024) {
@@ -199,7 +200,9 @@ export const handlers = [
       })
     }
     await latency(250)
-    const response: ValidateResponse = { validation: validateInvoice(body.invoice) }
+    const response: ValidateResponse = {
+      validation: validateInvoice(normalizeInvoice(body.invoice)),
+    }
     return HttpResponse.json(response)
   }),
 

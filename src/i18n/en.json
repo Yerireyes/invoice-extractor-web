@@ -26,7 +26,13 @@
     "LLM_UNAVAILABLE": "The AI service isn't responding. Try again in a few minutes.",
     "INTERNAL_ERROR": "Unexpected server error. Try again later.",
     "NETWORK_ERROR": "Can't reach the server. Check your internet connection.",
-    "UNKNOWN_ERROR": "The server returned an unexpected error. Try again."
+    "UNKNOWN_ERROR": "The server returned an unexpected error. Try again.",
+    "TOO_MANY_INVOICES_one": "You can export at most {{count}} invoice at a time. Select fewer.",
+    "TOO_MANY_INVOICES_other": "You can export at most {{count}} invoices at a time. Select fewer.",
+    "LLM_QUOTA_EXCEEDED_one": "The AI service quota is used up. Try again in {{count}} second.",
+    "LLM_QUOTA_EXCEEDED_other": "The AI service quota is used up. Try again in {{count}} seconds.",
+    "LLM_UNAVAILABLE_one": "The AI service isn't responding. Try again in {{count}} second.",
+    "LLM_UNAVAILABLE_other": "The AI service isn't responding. Try again in {{count}} seconds."
   },
   "fileErrors": {
     "generic": "We couldn't process this file.",
@@ -35,7 +41,11 @@
     "UNSUPPORTED_FILE_TYPE": "Unsupported format. Use JPG, PNG, WEBP or PDF.",
     "FILE_TOO_LARGE": "The file exceeds the maximum allowed size.",
     "PDF_TOO_MANY_PAGES": "The PDF has more pages than allowed.",
-    "EXTRACTION_FAILED": "The AI couldn't extract the data. Try again or use a sharper image."
+    "EXTRACTION_FAILED": "The AI couldn't extract the data. Try again or use a sharper image.",
+    "FILE_TOO_LARGE_one": "The file exceeds the {{count}} MB limit.",
+    "FILE_TOO_LARGE_other": "The file exceeds the {{count}} MB limit.",
+    "PDF_TOO_MANY_PAGES_detail_one": "The PDF has {{pages}} pages and the limit is {{count}}.",
+    "PDF_TOO_MANY_PAGES_detail_other": "The PDF has {{pages}} pages and the limit is {{count}}."
   },
   "issues": {
     "generic": "There is a problem with this field.",

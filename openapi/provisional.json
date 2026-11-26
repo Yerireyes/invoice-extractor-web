@@ -3,52 +3,10 @@
   "info": {
     "title": "Invoice Extractor API",
     "version": "1.0.0",
-    "description": "PROVISIONAL: derived by the frontend from buzon/contrato/api-contract.md until the backend publishes its generated openapi.json.",
+    "description": "PROVISIONAL: endpoints the backend has not published yet (extract, exports), derived from buzon/contrato/api-contract.md. Refs point to published schemas. Merged by npm run sync:api.",
     "x-provisional": true
   },
   "paths": {
-    "/api/v1/health": {
-      "get": {
-        "operationId": "health",
-        "summary": "Health check",
-        "tags": [
-          "service"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/meta": {
-      "get": {
-        "operationId": "getMeta",
-        "summary": "Limits, formats, providers and export languages",
-        "tags": [
-          "service"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MetaResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/invoices/extract": {
       "post": {
         "operationId": "extractInvoices",
@@ -82,7 +40,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -92,7 +50,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -102,7 +60,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -112,7 +70,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -122,68 +80,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/invoices/validate": {
-      "post": {
-        "operationId": "validateInvoice",
-        "summary": "Re-validate an edited invoice",
-        "tags": [
-          "invoices"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ValidateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidateResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Invalid request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -232,7 +129,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -242,7 +139,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -252,7 +149,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -301,7 +198,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -311,7 +208,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -321,7 +218,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -332,540 +229,6 @@
   },
   "components": {
     "schemas": {
-      "HealthResponse": {
-        "type": "object",
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "status": {
-            "type": "string",
-            "const": "ok"
-          }
-        }
-      },
-      "Limits": {
-        "type": "object",
-        "required": [
-          "max_files_per_request",
-          "max_file_size_mb",
-          "max_pdf_pages",
-          "max_invoices_per_export"
-        ],
-        "properties": {
-          "max_files_per_request": {
-            "type": "integer"
-          },
-          "max_file_size_mb": {
-            "type": "integer"
-          },
-          "max_pdf_pages": {
-            "type": "integer"
-          },
-          "max_invoices_per_export": {
-            "type": "integer"
-          }
-        }
-      },
-      "ProviderId": {
-        "type": "string",
-        "enum": [
-          "gemini",
-          "ollama"
-        ]
-      },
-      "ProviderInfo": {
-        "type": "object",
-        "required": [
-          "id",
-          "available",
-          "default"
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ProviderId"
-          },
-          "available": {
-            "type": "boolean"
-          },
-          "default": {
-            "type": "boolean"
-          }
-        }
-      },
-      "ExportLanguage": {
-        "type": "string",
-        "enum": [
-          "es",
-          "en"
-        ]
-      },
-      "MetaResponse": {
-        "type": "object",
-        "required": [
-          "version",
-          "limits",
-          "accepted_mime_types",
-          "providers",
-          "export_languages"
-        ],
-        "properties": {
-          "version": {
-            "type": "string"
-          },
-          "limits": {
-            "$ref": "#/components/schemas/Limits"
-          },
-          "accepted_mime_types": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "providers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProviderInfo"
-            }
-          },
-          "export_languages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExportLanguage"
-            }
-          }
-        }
-      },
-      "DocumentType": {
-        "type": "string",
-        "enum": [
-          "invoice",
-          "receipt",
-          "credit_note",
-          "other"
-        ]
-      },
-      "Party": {
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Required for the issuer; nullable for the recipient"
-          },
-          "tax_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Tax identifier"
-          },
-          "tax_id_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Free text: RFC, NIF, CUIT, VAT, EIN…"
-          },
-          "address": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Postal address"
-          },
-          "email": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Email"
-          },
-          "phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Phone"
-          }
-        }
-      },
-      "LineItem": {
-        "type": "object",
-        "required": [
-          "description",
-          "amount"
-        ],
-        "properties": {
-          "description": {
-            "type": "string",
-            "description": "Concept description"
-          },
-          "quantity": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Quantity. Decimal string"
-          },
-          "unit": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Unit"
-          },
-          "unit_price": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Unit price. Decimal string"
-          },
-          "discount": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Discount. Decimal string"
-          },
-          "tax_rate": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Tax rate, percentage. Decimal string"
-          },
-          "amount": {
-            "type": "string",
-            "description": "quantity × unit_price − discount. Decimal string",
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": [
-              "1160.00"
-            ]
-          }
-        }
-      },
-      "Tax": {
-        "type": "object",
-        "required": [
-          "name",
-          "rate",
-          "base",
-          "amount"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Tax name (IVA, VAT…)"
-          },
-          "rate": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Percentage. Decimal string"
-          },
-          "base": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Taxable base. Decimal string"
-          },
-          "amount": {
-            "type": "string",
-            "description": "Tax amount. Decimal string",
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": [
-              "1160.00"
-            ]
-          }
-        }
-      },
-      "Invoice": {
-        "type": "object",
-        "required": [
-          "document_type",
-          "issue_date",
-          "currency",
-          "issuer",
-          "line_items",
-          "taxes",
-          "total"
-        ],
-        "properties": {
-          "document_type": {
-            "$ref": "#/components/schemas/DocumentType"
-          },
-          "invoice_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Invoice number"
-          },
-          "issue_date": {
-            "type": "string",
-            "description": "ISO 8601 date",
-            "format": "date"
-          },
-          "due_date": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "ISO 8601 date"
-          },
-          "currency": {
-            "type": "string",
-            "description": "ISO 4217",
-            "examples": [
-              "MXN"
-            ]
-          },
-          "country": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "ISO 3166-1 alpha-2"
-          },
-          "language": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Detected language, ISO 639-1"
-          },
-          "issuer": {
-            "$ref": "#/components/schemas/Party"
-          },
-          "recipient": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Party"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "line_items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LineItem"
-            }
-          },
-          "subtotal": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Subtotal. Decimal string"
-          },
-          "discount_total": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^-?\\d+(\\.\\d+)?$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Total discounts. Decimal string"
-          },
-          "taxes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Tax"
-            }
-          },
-          "total": {
-            "type": "string",
-            "description": "Total. Decimal string",
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "examples": [
-              "1160.00"
-            ]
-          },
-          "payment_method": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Payment method"
-          },
-          "notes": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Notes"
-          }
-        }
-      },
-      "IssueSeverity": {
-        "type": "string",
-        "enum": [
-          "error",
-          "warning",
-          "info"
-        ]
-      },
-      "Issue": {
-        "type": "object",
-        "required": [
-          "code",
-          "severity",
-          "field",
-          "params"
-        ],
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "MISSING_REQUIRED_FIELD | INVALID_CURRENCY | TOTAL_MISMATCH | SUBTOTAL_MISMATCH | LINE_AMOUNT_MISMATCH | TAX_MISMATCH | DUE_BEFORE_ISSUE | FUTURE_DATE | LOW_CONFIDENCE"
-          },
-          "severity": {
-            "$ref": "#/components/schemas/IssueSeverity"
-          },
-          "field": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Path of the affected field (issuer.tax_id, line_items.0.amount)"
-          },
-          "params": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        }
-      },
-      "ValidationStatus": {
-        "type": "string",
-        "enum": [
-          "valid",
-          "warnings",
-          "invalid"
-        ]
-      },
-      "Validation": {
-        "type": "object",
-        "required": [
-          "status",
-          "issues"
-        ],
-        "properties": {
-          "status": {
-            "$ref": "#/components/schemas/ValidationStatus"
-          },
-          "issues": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Issue"
-            }
-          }
-        }
-      },
       "ExtractionMeta": {
         "type": "object",
         "required": [
@@ -876,7 +239,7 @@
         ],
         "properties": {
           "provider": {
-            "$ref": "#/components/schemas/ProviderId"
+            "$ref": "#/components/schemas/LLMProvider"
           },
           "model": {
             "type": "string"
@@ -1031,29 +394,7 @@
             }
           },
           "provider": {
-            "$ref": "#/components/schemas/ProviderId"
-          }
-        }
-      },
-      "ValidateRequest": {
-        "type": "object",
-        "required": [
-          "invoice"
-        ],
-        "properties": {
-          "invoice": {
-            "$ref": "#/components/schemas/Invoice"
-          }
-        }
-      },
-      "ValidateResponse": {
-        "type": "object",
-        "required": [
-          "validation"
-        ],
-        "properties": {
-          "validation": {
-            "$ref": "#/components/schemas/Validation"
+            "$ref": "#/components/schemas/LLMProvider"
           }
         }
       },
@@ -1093,39 +434,6 @@
             "$ref": "#/components/schemas/ExportOptions"
           }
         }
-      },
-      "ProblemDetail": {
-        "type": "object",
-        "required": [
-          "type",
-          "title",
-          "status",
-          "code",
-          "params"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "status": {
-            "type": "integer"
-          },
-          "code": {
-            "type": "string",
-            "description": "TOO_MANY_FILES | NO_FILES | TOO_MANY_INVOICES | VALIDATION_ERROR | PROVIDER_NOT_AVAILABLE | RATE_LIMITED | LLM_QUOTA_EXCEEDED | LLM_UNAVAILABLE | INTERNAL_ERROR"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "params": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "description": "RFC 9457 Problem Details"
       }
     }
   }
