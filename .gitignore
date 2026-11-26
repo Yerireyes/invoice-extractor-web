@@ -34,3 +34,6 @@ Thumbs.db
 # Never commit real invoices
 *.pdf
 !src/mocks/fixtures/**/*.pdf
+
+# Visual references (uxpilot), local only
+docs/references/
