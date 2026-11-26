@@ -44,7 +44,9 @@ Si no tienes acceso a `../buzon`, pide al usuario que lo añada a la sesión (`/
 | Tests | Vitest + Testing Library (+ MSW en tests) |
 | Calidad | ESLint + Prettier |
 
-Usa las versiones estables más recientes al crear el proyecto.
+Usa las versiones estables más recientes al crear el proyecto, con estas excepciones fijadas (revisar cuando el ecosistema las soporte):
+- **TypeScript 6.0.x**, no 7: typescript-eslint (`<6.1`) y openapi-typescript dependen de la API JS de TS, que TS 7 (port nativo) no tiene.
+- **ESLint 9**, no 10: eslint-plugin-jsx-a11y aún no soporta ESLint 10.
 
 ## Arquitectura: organizada por features
 
@@ -215,7 +217,7 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 
 | ID | Rama | Estado |
 |---|---|---|
-| FRT-APP-0001 | `chore/app/frt-app-0001` | pendiente |
+| FRT-APP-0001 | `chore/app/frt-app-0001` | en curso |
 | FRT-APP-0002 | `chore/app/frt-app-0002` | pendiente |
 | FRT-APP-0003 | `feat/app/frt-app-0003` | pendiente |
 | FRT-LNG-0004 | `feat/i18n/frt-lng-0004` | pendiente |

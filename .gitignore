@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Build / test output
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+
+# Environment (never commit secrets; .env.example is the template)
+.env
+.env.*
+!.env.example
+!.env.mock
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Local AI tooling (skills, agents, hooks, design detector config)
+.claude/
+.impeccable/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+*.sw?
+
+# Never commit real invoices
+*.pdf
+!src/mocks/fixtures/**/*.pdf

@@ -1,0 +1,34 @@
+# Dependencies and build output (rebuilt inside the image)
+node_modules
+dist
+coverage
+*.tsbuildinfo
+
+# VCS and CI
+.git
+.gitignore
+.gitattributes
+.github
+
+# Environment files (build args are passed explicitly)
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Local tooling / editors / OS
+.claude
+.impeccable
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.log
+
+# Docs
+README.md
+CLAUDE.md
