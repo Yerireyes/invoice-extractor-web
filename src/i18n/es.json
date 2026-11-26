@@ -121,5 +121,59 @@
     "total": "Total",
     "payment_method": "Método de pago",
     "notes": "Notas"
+  },
+  "upload": {
+    "titleLine1": "De la foto al Excel,",
+    "titleLine2": "sin teclear.",
+    "lead": "Sube tus facturas y recibos. La IA extrae los datos, tú los revisas con la imagen al lado y descargas un Excel o PDF.",
+    "steps": {
+      "label": "Cómo funciona",
+      "upload": "Sube",
+      "review": "Revisa",
+      "download": "Descarga"
+    },
+    "dropzone": {
+      "label": "Zona para subir facturas",
+      "title": "Arrastra tus facturas aquí",
+      "titleTouch": "Sube fotos o PDFs de tus facturas",
+      "active": "Suéltalas para añadirlas",
+      "reject": "Alguno de estos archivos no es compatible",
+      "or": "o",
+      "select": "Selecciona archivos",
+      "limits_one": "{{formats}} · hasta {{count}} archivo · máx. {{maxMb}} MB cada uno",
+      "limits_other": "{{formats}} · hasta {{count}} archivos · máx. {{maxMb}} MB cada uno"
+    },
+    "samples": {
+      "question": "¿No tienes facturas a mano?",
+      "action": "Prueba con facturas de ejemplo",
+      "loading": "Cargando ejemplos…",
+      "error": "No se pudieron cargar las facturas de ejemplo. Inténtalo de nuevo.",
+      "alreadyAdded": "Las facturas de ejemplo ya están en la lista."
+    },
+    "privacy": "No almacenamos tus facturas: solo se envían para leer sus datos.",
+    "list": {
+      "heading": "Archivos seleccionados",
+      "ready_one": "{{count}} archivo listo",
+      "ready_other": "{{count}} archivos listos",
+      "problems_one": "{{count}} con problemas",
+      "problems_other": "{{count}} con problemas",
+      "clear": "Quitar todo",
+      "remove": "Quitar {{name}}",
+      "added_one": "Se añadió {{count}} archivo.",
+      "added_other": "Se añadieron {{count}} archivos.",
+      "removed": "Se quitó {{name}}.",
+      "cleared": "Se vació la lista.",
+      "statusReady": "Listo",
+      "statusSkipped": "No se enviará"
+    },
+    "problems": {
+      "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa {{formats}}.",
+      "FILE_TOO_LARGE_one": "Pesa más de {{count}} MB, el máximo por archivo.",
+      "FILE_TOO_LARGE_other": "Pesa más de {{count}} MB, el máximo por archivo.",
+      "EMPTY_FILE": "El archivo está vacío.",
+      "TOO_MANY_FILES_one": "Ya tienes {{count}} archivo, el máximo por envío. Quita alguno para añadir este.",
+      "TOO_MANY_FILES_other": "Ya tienes {{count}} archivos, el máximo por envío. Quita alguno para añadir este.",
+      "DUPLICATE_FILE": "Este archivo ya está en la lista."
+    }
   }
 }

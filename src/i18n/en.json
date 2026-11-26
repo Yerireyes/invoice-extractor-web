@@ -121,5 +121,59 @@
     "total": "Total",
     "payment_method": "Payment method",
     "notes": "Notes"
+  },
+  "upload": {
+    "titleLine1": "From photo to Excel,",
+    "titleLine2": "no typing.",
+    "lead": "Upload your invoices and receipts. AI extracts the data, you check it next to the image, and download an Excel or PDF.",
+    "steps": {
+      "label": "How it works",
+      "upload": "Upload",
+      "review": "Review",
+      "download": "Download"
+    },
+    "dropzone": {
+      "label": "Invoice upload area",
+      "title": "Drag your invoices here",
+      "titleTouch": "Upload photos or PDFs of your invoices",
+      "active": "Drop them to add them",
+      "reject": "Some of these files are not supported",
+      "or": "or",
+      "select": "Choose files",
+      "limits_one": "{{formats}} · up to {{count}} file · max. {{maxMb}} MB each",
+      "limits_other": "{{formats}} · up to {{count}} files · max. {{maxMb}} MB each"
+    },
+    "samples": {
+      "question": "No invoices at hand?",
+      "action": "Try it with sample invoices",
+      "loading": "Loading samples…",
+      "error": "Couldn't load the sample invoices. Please try again.",
+      "alreadyAdded": "The sample invoices are already in the list."
+    },
+    "privacy": "We don't store your invoices: they're only sent to read their data.",
+    "list": {
+      "heading": "Selected files",
+      "ready_one": "{{count}} file ready",
+      "ready_other": "{{count}} files ready",
+      "problems_one": "{{count}} with problems",
+      "problems_other": "{{count}} with problems",
+      "clear": "Remove all",
+      "remove": "Remove {{name}}",
+      "added_one": "{{count}} file added.",
+      "added_other": "{{count}} files added.",
+      "removed": "Removed {{name}}.",
+      "cleared": "The list is now empty.",
+      "statusReady": "Ready",
+      "statusSkipped": "Won’t be sent"
+    },
+    "problems": {
+      "UNSUPPORTED_FILE_TYPE": "Unsupported format. Use {{formats}}.",
+      "FILE_TOO_LARGE_one": "It's larger than {{count}} MB, the limit per file.",
+      "FILE_TOO_LARGE_other": "It's larger than {{count}} MB, the limit per file.",
+      "EMPTY_FILE": "The file is empty.",
+      "TOO_MANY_FILES_one": "You already have {{count}} file, the limit per upload. Remove one to add this.",
+      "TOO_MANY_FILES_other": "You already have {{count}} files, the limit per upload. Remove one to add this.",
+      "DUPLICATE_FILE": "This file is already in the list."
+    }
   }
 }
