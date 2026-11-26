@@ -4,7 +4,8 @@ import type {
   ExtractionResult,
   ExtractResponse,
   FileError,
-  ProblemDetails,
+  ErrorCode,
+  ProblemDetail,
   ValidateRequest,
   ValidateResponse,
 } from '@/lib/api-models'
@@ -20,14 +21,31 @@ const isTest = import.meta.env.MODE === 'test'
 /** Simulated latency in the browser; instant in tests. */
 const latency = (ms: number) => delay(isTest ? 0 : ms)
 
+/** Standard HTTP reason phrases, as the backend sends in `title` (never shown to users). */
+const REASON_PHRASES: Record<number, string> = {
+  400: 'Bad Request',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  422: 'Unprocessable Content',
+  429: 'Too Many Requests',
+  500: 'Internal Server Error',
+  503: 'Service Unavailable',
+}
+
 function problem(
   status: number,
-  code: string,
-  title: string,
+  code: ErrorCode,
   params: Record<string, unknown> = {},
   headers?: HeadersInit,
 ) {
-  const body: ProblemDetails = { type: 'about:blank', title, status, code, params }
+  const body: ProblemDetail = {
+    type: 'about:blank',
+    title: REASON_PHRASES[status] ?? 'Error',
+    status,
+    code,
+    detail: null,
+    params,
+  }
   const finalHeaders = new Headers(headers)
   finalHeaders.set('Content-Type', 'application/problem+json')
   return HttpResponse.json(body, { status, headers: finalHeaders })
@@ -93,11 +111,13 @@ function exportHandler(kind: 'excel' | 'pdf') {
   return http.post(api(`/exports/${kind}`), async ({ request }) => {
     const body = (await request.json()) as Partial<ExportRequest> | null
     if (!body || !Array.isArray(body.invoices) || !body.options) {
-      return problem(422, 'VALIDATION_ERROR', 'Invalid body', { errors: [] })
+      return problem(422, 'VALIDATION_ERROR', {
+        errors: [{ loc: ['body', 'options'], msg: 'Field required', type: 'missing' }],
+      })
     }
     const max = meta.limits.max_invoices_per_export
     if (body.invoices.length > max) {
-      return problem(422, 'TOO_MANY_INVOICES', 'Too many invoices', { max })
+      return problem(422, 'TOO_MANY_INVOICES', { max_invoices: max })
     }
     await latency(800)
     // Excel is a placeholder in mock mode (not a real workbook); the PDF is a minimal valid file.
@@ -124,24 +144,19 @@ export const handlers = [
     const files = form.getAll('files').filter((entry): entry is File => typeof entry !== 'string')
     const { max_files_per_request } = meta.limits
 
-    if (files.length === 0) return problem(422, 'NO_FILES', 'No files')
+    if (files.length === 0) return problem(422, 'NO_FILES')
     if (files.length > max_files_per_request) {
-      return problem(422, 'TOO_MANY_FILES', 'Too many files', { max: max_files_per_request })
+      return problem(422, 'TOO_MANY_FILES', {
+        max_files: max_files_per_request,
+      })
     }
 
     const names = files.map((f) => f.name).join(' ')
     if (MOCK_TRIGGERS.rateLimited.test(names)) {
-      return problem(
-        429,
-        'RATE_LIMITED',
-        'Too many requests',
-        { retry_after_s: 30 },
-        { 'Retry-After': '30' },
-      )
+      return problem(429, 'RATE_LIMITED', { retry_after_s: 30 }, { 'Retry-After': '30' })
     }
-    if (MOCK_TRIGGERS.quota.test(names)) return problem(503, 'LLM_QUOTA_EXCEEDED', 'Quota exceeded')
-    if (MOCK_TRIGGERS.unavailable.test(names))
-      return problem(503, 'LLM_UNAVAILABLE', 'Provider unavailable')
+    if (MOCK_TRIGGERS.quota.test(names)) return problem(503, 'LLM_QUOTA_EXCEEDED')
+    if (MOCK_TRIGGERS.unavailable.test(names)) return problem(503, 'LLM_UNAVAILABLE')
 
     await latency(900 + 600 * files.length)
 
@@ -179,7 +194,7 @@ export const handlers = [
   http.post(api('/invoices/validate'), async ({ request }) => {
     const body = (await request.json()) as Partial<ValidateRequest> | null
     if (!body?.invoice) {
-      return problem(422, 'VALIDATION_ERROR', 'Invalid body', {
+      return problem(422, 'VALIDATION_ERROR', {
         errors: [{ loc: ['body', 'invoice'] }],
       })
     }

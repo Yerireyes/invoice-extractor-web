@@ -80,9 +80,13 @@ MSW solo entra en el build cuando `VITE_USE_MOCKS=true`; el bundle de producció
 
 ## Contrato de la API
 
-Los tipos de `src/lib/api-types.ts` se **generan** desde `openapi/openapi.json` con `npm run gen:api` (el CI falla si no están al día). El contrato lo publica el backend.
+Los tipos de `src/lib/api-types.ts` se **generan** desde `openapi/openapi.json` con `npm run gen:api` (el CI falla si no están al día). El contrato lo publica el backend en `../buzon/contrato/openapi.json`.
 
-> **Provisional:** mientras el backend no publique su `openapi.json`, el de este repo está escrito a partir de `api-contract.md` (`info.x-provisional: true`).
+```bash
+npm run sync:api   # contrato publicado + openapi/provisional.json → openapi/openapi.json → tipos
+```
+
+`openapi/provisional.json` cubre los endpoints que el backend aún no ha publicado (derivados de `api-contract.md`). Lo publicado siempre tiene prioridad y lo provisional se marca con `x-provisional: true`, así que desaparece solo en cuanto el backend publica cada endpoint.
 
 ## Estructura
 

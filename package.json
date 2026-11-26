@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -b --noEmit",
-    "gen:api": "openapi-typescript openapi/openapi.json -o src/lib/api-types.ts"
+    "gen:api": "openapi-typescript openapi/openapi.json -o src/lib/api-types.ts",
+    "sync:api": "node scripts/sync-openapi.mjs && npm run gen:api"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

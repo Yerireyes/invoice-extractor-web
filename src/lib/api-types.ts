@@ -11,8 +11,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Health check */
-        get: operations["health"];
+        /** Comprobación de salud */
+        get: operations["health_api_v1_health_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -28,8 +28,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Limits, formats, providers and export languages */
-        get: operations["getMeta"];
+        /** Límites, formatos aceptados, proveedores e idiomas de exportación */
+        get: operations["meta_api_v1_meta_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -110,31 +110,92 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        HealthResponse: {
-            /** @constant */
-            status: "ok";
-        };
-        Limits: {
-            max_files_per_request: number;
-            max_file_size_mb: number;
-            max_pdf_pages: number;
-            max_invoices_per_export: number;
-        };
-        /** @enum {string} */
-        ProviderId: "gemini" | "ollama";
-        ProviderInfo: {
-            id: components["schemas"]["ProviderId"];
-            available: boolean;
-            default: boolean;
-        };
+        /**
+         * ErrorCode
+         * @description Códigos de error HTTP del contrato (sección 5).
+         * @enum {string}
+         */
+        ErrorCode: "TOO_MANY_FILES" | "NO_FILES" | "TOO_MANY_INVOICES" | "VALIDATION_ERROR" | "PROVIDER_NOT_AVAILABLE" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "RATE_LIMITED" | "LLM_QUOTA_EXCEEDED" | "LLM_UNAVAILABLE" | "INTERNAL_ERROR";
         /** @enum {string} */
         ExportLanguage: "es" | "en";
+        /** HealthResponse */
+        HealthResponse: {
+            /**
+             * Status
+             * @default ok
+             * @constant
+             */
+            status: "ok";
+        };
+        /** Limits */
+        Limits: {
+            /** Max Files Per Request */
+            max_files_per_request: number;
+            /** Max File Size Mb */
+            max_file_size_mb: number;
+            /** Max Pdf Pages */
+            max_pdf_pages: number;
+            /** Max Invoices Per Export */
+            max_invoices_per_export: number;
+        };
+        /** MetaResponse */
         MetaResponse: {
+            /** Version */
             version: string;
             limits: components["schemas"]["Limits"];
+            /** Accepted Mime Types */
             accepted_mime_types: string[];
+            /** Providers */
             providers: components["schemas"]["ProviderInfo"][];
+            /** Export Languages */
             export_languages: components["schemas"]["ExportLanguage"][];
+        };
+        /**
+         * ProblemDetail
+         * @description Cuerpo de error RFC 9457 extendido con `code` y `params`.
+         */
+        ProblemDetail: {
+            /**
+             * Type
+             * @default about:blank
+             * @example about:blank
+             */
+            type: string;
+            /**
+             * Title
+             * @example Unprocessable Content
+             */
+            title: string;
+            /**
+             * Status
+             * @example 422
+             */
+            status: number;
+            code: components["schemas"]["ErrorCode"];
+            /**
+             * Detail
+             * @example Max 10 files per request
+             */
+            detail?: string | null;
+            /**
+             * Params
+             * @example {
+             *       "max_files": 10
+             *     }
+             */
+            params?: {
+                [key: string]: unknown;
+            };
+        };
+        /** @enum {string} */
+        ProviderId: "gemini" | "ollama" | "fake";
+        /** ProviderInfo */
+        ProviderInfo: {
+            id: components["schemas"]["ProviderId"];
+            /** Available */
+            available: boolean;
+            /** Default */
+            default: boolean;
         };
         /** @enum {string} */
         DocumentType: "invoice" | "receipt" | "credit_note" | "other";
@@ -305,18 +366,6 @@ export interface components {
             invoices: components["schemas"]["Invoice"][];
             options: components["schemas"]["ExportOptions"];
         };
-        /** @description RFC 9457 Problem Details */
-        ProblemDetails: {
-            type: string;
-            title: string;
-            status: number;
-            /** @description TOO_MANY_FILES | NO_FILES | TOO_MANY_INVOICES | VALIDATION_ERROR | PROVIDER_NOT_AVAILABLE | RATE_LIMITED | LLM_QUOTA_EXCEEDED | LLM_UNAVAILABLE | INTERNAL_ERROR */
-            code: string;
-            detail?: string;
-            params: {
-                [key: string]: unknown;
-            };
-        };
     };
     responses: never;
     parameters: never;
@@ -326,7 +375,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health: {
+    health_api_v1_health_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -335,7 +384,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -344,9 +393,18 @@ export interface operations {
                     "application/json": components["schemas"]["HealthResponse"];
                 };
             };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                };
+            };
         };
     };
-    getMeta: {
+    meta_api_v1_meta_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -355,13 +413,22 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["MetaResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
         };
@@ -394,7 +461,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Invalid request */
@@ -403,7 +470,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Rate limited */
@@ -412,7 +479,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Internal error */
@@ -421,7 +488,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description LLM unavailable or quota exceeded */
@@ -430,7 +497,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
         };
@@ -463,7 +530,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Rate limited */
@@ -472,7 +539,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Internal error */
@@ -481,7 +548,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
         };
@@ -515,7 +582,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Rate limited */
@@ -524,7 +591,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Internal error */
@@ -533,7 +600,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
         };
@@ -567,7 +634,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Rate limited */
@@ -576,7 +643,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
             /** @description Internal error */
@@ -585,7 +652,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                    "application/problem+json": components["schemas"]["ProblemDetail"];
                 };
             };
         };
