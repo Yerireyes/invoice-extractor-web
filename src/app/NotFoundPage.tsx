@@ -10,8 +10,7 @@ export function NotFoundPage() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-      <p className="font-mono text-xs text-muted-foreground">404</p>
-      <h1 className="mt-3 font-display text-[2rem] leading-tight tracking-[-0.015em] text-balance">
+      <h1 className="font-display text-[2rem] leading-tight tracking-[-0.015em] text-balance">
         {t('notFound.title')}
       </h1>
       <p className="mt-3 text-pretty text-muted-foreground">
