@@ -28,6 +28,22 @@ interface InvoicesState {
   updateInvoice: (id: string, invoice: Invoice) => void
   /** Marks a low-confidence field as checked by the user. */
   confirmField: (id: string, path: string) => void
+  /**
+   * Keeps confidence and confirmations attached to the right row after row `index` of a list
+   * (`line_items`, `taxes`) is removed: its paths are dropped and later rows move up by one.
+   */
+  removeListPaths: (id: string, list: string, index: number) => void
+}
+
+/** "line_items.2.amount" with list "line_items" and removed index 1 → "line_items.1.amount". */
+function shiftPath(path: string, list: string, removed: number): string | null {
+  const prefix = `${list}.`
+  if (!path.startsWith(prefix)) return path
+  const [position = '', ...rest] = path.slice(prefix.length).split('.')
+  const index = Number(position)
+  if (!Number.isInteger(index) || index < removed) return path
+  if (index === removed) return null
+  return [list, index - 1, ...rest].join('.')
 }
 
 function revoke(invoice: BatchInvoice) {
@@ -60,6 +76,22 @@ export const useInvoicesStore = create<InvoicesState>()((set, get) => ({
           ? { ...entry, confirmedFields: [...entry.confirmedFields, path] }
           : entry,
       ),
+    }))
+  },
+  removeListPaths: (id, list, index) => {
+    set((state) => ({
+      invoices: state.invoices.map((entry) => {
+        if (entry.id !== id) return entry
+        const fieldConfidence: Record<string, number> = {}
+        for (const [path, confidence] of Object.entries(entry.fieldConfidence)) {
+          const shifted = shiftPath(path, list, index)
+          if (shifted !== null) fieldConfidence[shifted] = confidence
+        }
+        const confirmedFields = entry.confirmedFields
+          .map((path) => shiftPath(path, list, index))
+          .filter((path) => path !== null)
+        return { ...entry, fieldConfidence, confirmedFields }
+      }),
     }))
   },
 }))

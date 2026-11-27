@@ -28,6 +28,33 @@ describe('invoices store', () => {
     expect(b?.invoice.invoice_number).toBeNull()
   })
 
+  it('moves confidence and confirmations up when a row is removed', () => {
+    useInvoicesStore.getState().add([
+      {
+        ...entry('a'),
+        fieldConfidence: {
+          'line_items.0.amount': 0.5,
+          'line_items.1.amount': 0.6,
+          'line_items.2.quantity': 0.4,
+          'taxes.1.rate': 0.3,
+          total: 0.9,
+        },
+        confirmedFields: ['line_items.2.quantity', 'taxes.1.rate'],
+      },
+    ])
+
+    useInvoicesStore.getState().removeListPaths('a', 'line_items', 1)
+
+    const [a] = useInvoicesStore.getState().invoices
+    expect(a?.fieldConfidence).toEqual({
+      'line_items.0.amount': 0.5,
+      'line_items.1.quantity': 0.4,
+      'taxes.1.rate': 0.3,
+      total: 0.9,
+    })
+    expect(a?.confirmedFields).toEqual(['line_items.1.quantity', 'taxes.1.rate'])
+  })
+
   it('flags low-confidence fields until they are checked', () => {
     const invoice = { ...entry('a'), fieldConfidence: { total: 0.98, 'issuer.tax_id': 0.62 } }
     expect(needsCheck(invoice, 'issuer.tax_id')).toBe(true)

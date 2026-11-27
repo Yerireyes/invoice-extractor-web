@@ -1,5 +1,5 @@
 import { invoiceEur, receiptUsd } from '@/mocks/fixtures/invoices'
-import { applyFormValues, generalSchema, toFormValues } from './schema'
+import { applyFormValues, emptyLineItem, emptyTax, invoiceFormSchema, toFormValues } from './schema'
 
 describe('general form mapping', () => {
   it('maps nullable contract fields to strings and back without changes', () => {
@@ -25,23 +25,61 @@ describe('general form mapping', () => {
     expect(invoice.country).toBe('ES')
   })
 
-  it('keeps an absent recipient absent and leaves amounts untouched', () => {
+  it('keeps an absent recipient absent and round-trips amounts', () => {
     const invoice = applyFormValues(receiptUsd, toFormValues(receiptUsd))
-    expect(invoice.recipient).toBeNull()
-    expect(invoice.line_items).toBe(receiptUsd.line_items)
-    expect(invoice.total).toBe(receiptUsd.total)
+    expect(invoice).toEqual(receiptUsd)
   })
 })
 
-describe('generalSchema', () => {
+describe('line items, taxes and totals mapping', () => {
+  it('writes edited amounts, adds and removes rows', () => {
+    const values = toFormValues(invoiceEur)
+    const [first, ...rest] = values.line_items
+    if (!first) throw new Error('fixture has no line items')
+    const edited = {
+      ...values,
+      line_items: [{ ...first, quantity: '3', amount: '2400.00' }, ...rest, emptyLineItem()],
+      taxes: [],
+      total: '',
+    }
+
+    const invoice = applyFormValues(invoiceEur, edited)
+    expect(invoice.line_items).toHaveLength(invoiceEur.line_items.length + 1)
+    expect(invoice.line_items[0]).toMatchObject({ quantity: '3', amount: '2400.00' })
+    expect(invoice.line_items.at(-1)).toEqual({
+      description: '',
+      quantity: null,
+      unit: null,
+      unit_price: null,
+      discount: null,
+      tax_rate: null,
+      amount: '0',
+    })
+    expect(invoice.taxes).toEqual([])
+    expect(invoice.total).toBeNull()
+  })
+
+  it('keeps the previous amount while the typed text is not a number', () => {
+    const values = toFormValues(invoiceEur)
+    const invoice = applyFormValues(invoiceEur, {
+      ...values,
+      subtotal: '12a',
+      taxes: values.taxes.map((tax) => ({ ...tax, amount: '' })),
+    })
+    expect(invoice.subtotal).toBe(invoiceEur.subtotal)
+    expect(invoice.taxes.map((tax) => tax.amount)).toEqual(invoiceEur.taxes.map((t) => t.amount))
+  })
+})
+
+describe('invoiceFormSchema', () => {
   const valid = toFormValues(invoiceEur)
   const issues = (values: unknown) =>
-    generalSchema
+    invoiceFormSchema
       .safeParse(values)
       .error?.issues.map((issue) => [issue.path.join('.'), issue.message])
 
   it('accepts a complete invoice', () => {
-    expect(generalSchema.safeParse(valid).success).toBe(true)
+    expect(invoiceFormSchema.safeParse(valid).success).toBe(true)
   })
 
   it('requires issue date, currency and issuer name', () => {
@@ -66,6 +104,22 @@ describe('generalSchema', () => {
       ['invoice_number', 'review.errors.tooLong'],
       ['due_date', 'review.errors.date'],
       ['country', 'review.errors.country'],
+    ])
+  })
+
+  it('checks amounts in lines, taxes and totals', () => {
+    expect(
+      issues({
+        ...valid,
+        line_items: [{ ...emptyLineItem(), quantity: 'dos' }],
+        taxes: [{ ...emptyTax(), amount: '1.2.3' }],
+        total: '1234567890123456',
+      }),
+    ).toEqual([
+      ['line_items.0.quantity', 'review.errors.amount'],
+      ['line_items.0.amount', 'review.errors.required'],
+      ['taxes.0.amount', 'review.errors.amount'],
+      ['total', 'review.errors.amount'],
     ])
   })
 })
