@@ -96,6 +96,16 @@
               }
             }
           },
+          "413": {
+            "description": "Content Too Large",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Unprocessable Content",
             "content": {
@@ -121,24 +131,23 @@
     },
     "/api/v1/invoices/extract": {
       "post": {
-        "operationId": "extractInvoices",
-        "summary": "Extract invoices from 1..N files (partial success allowed)",
         "tags": [
           "invoices"
         ],
+        "summary": "Sube 1..N facturas (imágenes o PDF) y devuelve sus datos extraídos y validados",
+        "operationId": "extract_api_v1_invoices_extract_post",
         "requestBody": {
-          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ExtractRequest"
+                "$ref": "#/components/schemas/Body_extract_api_v1_invoices_extract_post"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
@@ -148,7 +157,7 @@
             }
           },
           "413": {
-            "description": "File too large",
+            "description": "Content Too Large",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -158,17 +167,7 @@
             }
           },
           "422": {
-            "description": "Invalid request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited",
+            "description": "Unprocessable Content",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -178,7 +177,7 @@
             }
           },
           "500": {
-            "description": "Internal error",
+            "description": "Internal Server Error",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -188,7 +187,7 @@
             }
           },
           "503": {
-            "description": "LLM unavailable or quota exceeded",
+            "description": "Service Unavailable",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -197,8 +196,7 @@
               }
             }
           }
-        },
-        "x-provisional": true
+        }
       }
     },
     "/api/v1/exports/excel": {
@@ -344,6 +342,39 @@
   },
   "components": {
     "schemas": {
+      "Body_extract_api_v1_invoices_extract_post": {
+        "properties": {
+          "files": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "contentMediaType": "application/octet-stream"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Files",
+            "description": "Imágenes (JPEG, PNG, WebP) o PDF"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LLMProvider"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Proveedor de IA; por defecto el de `/meta`"
+          }
+        },
+        "type": "object",
+        "title": "Body_extract_api_v1_invoices_extract_post"
+      },
       "DocumentType": {
         "type": "string",
         "enum": [
@@ -363,6 +394,7 @@
           "PROVIDER_NOT_AVAILABLE",
           "NOT_FOUND",
           "METHOD_NOT_ALLOWED",
+          "REQUEST_TOO_LARGE",
           "RATE_LIMITED",
           "LLM_QUOTA_EXCEEDED",
           "LLM_UNAVAILABLE",
@@ -377,6 +409,193 @@
           "es",
           "en"
         ]
+      },
+      "ExtractResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractionResult"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ExtractSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "results",
+          "summary"
+        ],
+        "title": "ExtractResponse"
+      },
+      "ExtractSummary": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Total"
+          },
+          "succeeded": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Succeeded"
+          },
+          "failed": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Failed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "succeeded",
+          "failed"
+        ],
+        "title": "ExtractSummary"
+      },
+      "ExtractionFailure": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "status": {
+            "type": "string",
+            "const": "error",
+            "title": "Status",
+            "default": "error"
+          },
+          "error": {
+            "$ref": "#/components/schemas/FileError"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "error"
+        ],
+        "title": "ExtractionFailure"
+      },
+      "ExtractionMeta": {
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/LLMProvider"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "pages": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Pages"
+          },
+          "processing_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Processing Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "model",
+          "pages",
+          "processing_ms"
+        ],
+        "title": "ExtractionMeta"
+      },
+      "ExtractionResult": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ExtractionSuccess"
+          },
+          {
+            "$ref": "#/components/schemas/ExtractionFailure"
+          }
+        ],
+        "title": "ExtractionResult",
+        "description": "Resultado por archivo: unión discriminada por `status` (`success` | `error`).",
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "error": "#/components/schemas/ExtractionFailure",
+            "success": "#/components/schemas/ExtractionSuccess"
+          }
+        }
+      },
+      "ExtractionSuccess": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "status": {
+            "type": "string",
+            "const": "success",
+            "title": "Status",
+            "default": "success"
+          },
+          "invoice": {
+            "$ref": "#/components/schemas/Invoice"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/Validation"
+          },
+          "field_confidence": {
+            "additionalProperties": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            },
+            "type": "object",
+            "title": "Field Confidence",
+            "description": "Confianza 0..1 por campo, en notación de ruta (`issuer.tax_id`)."
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ExtractionMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "invoice",
+          "validation",
+          "meta"
+        ],
+        "title": "ExtractionSuccess"
+      },
+      "FileError": {
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/FileErrorCode"
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "FileError"
+      },
+      "FileErrorCode": {
+        "type": "string",
+        "enum": [
+          "NOT_AN_INVOICE",
+          "UNREADABLE_FILE",
+          "UNSUPPORTED_FILE_TYPE",
+          "FILE_TOO_LARGE",
+          "PDF_TOO_MANY_PAGES",
+          "EXTRACTION_FAILED"
+        ],
+        "title": "FileErrorCode"
       },
       "HealthResponse": {
         "properties": {
@@ -1076,183 +1295,6 @@
           "warnings",
           "invalid"
         ]
-      },
-      "ExtractionMeta": {
-        "type": "object",
-        "required": [
-          "provider",
-          "model",
-          "pages",
-          "processing_ms"
-        ],
-        "properties": {
-          "provider": {
-            "$ref": "#/components/schemas/LLMProvider"
-          },
-          "model": {
-            "type": "string"
-          },
-          "pages": {
-            "type": "integer"
-          },
-          "processing_ms": {
-            "type": "integer"
-          }
-        },
-        "x-provisional": true
-      },
-      "FileError": {
-        "type": "object",
-        "required": [
-          "code",
-          "params"
-        ],
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "NOT_AN_INVOICE | UNREADABLE_FILE | UNSUPPORTED_FILE_TYPE | FILE_TOO_LARGE | PDF_TOO_MANY_PAGES | EXTRACTION_FAILED"
-          },
-          "params": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractionSuccess": {
-        "type": "object",
-        "required": [
-          "file_name",
-          "status",
-          "invoice",
-          "validation",
-          "field_confidence",
-          "meta"
-        ],
-        "properties": {
-          "file_name": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "const": "success"
-          },
-          "invoice": {
-            "$ref": "#/components/schemas/Invoice"
-          },
-          "validation": {
-            "$ref": "#/components/schemas/Validation"
-          },
-          "field_confidence": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            }
-          },
-          "meta": {
-            "$ref": "#/components/schemas/ExtractionMeta"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractionFailure": {
-        "type": "object",
-        "required": [
-          "file_name",
-          "status",
-          "error"
-        ],
-        "properties": {
-          "file_name": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "const": "error"
-          },
-          "error": {
-            "$ref": "#/components/schemas/FileError"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractionResult": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ExtractionSuccess"
-          },
-          {
-            "$ref": "#/components/schemas/ExtractionFailure"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "status",
-          "mapping": {
-            "success": "#/components/schemas/ExtractionSuccess",
-            "error": "#/components/schemas/ExtractionFailure"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractSummary": {
-        "type": "object",
-        "required": [
-          "total",
-          "succeeded",
-          "failed"
-        ],
-        "properties": {
-          "total": {
-            "type": "integer"
-          },
-          "succeeded": {
-            "type": "integer"
-          },
-          "failed": {
-            "type": "integer"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractResponse": {
-        "type": "object",
-        "required": [
-          "results",
-          "summary"
-        ],
-        "properties": {
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExtractionResult"
-            }
-          },
-          "summary": {
-            "$ref": "#/components/schemas/ExtractSummary"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExtractRequest": {
-        "type": "object",
-        "required": [
-          "files"
-        ],
-        "properties": {
-          "files": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "binary"
-            }
-          },
-          "provider": {
-            "$ref": "#/components/schemas/LLMProvider"
-          }
-        },
-        "x-provisional": true
       },
       "ExportOptions": {
         "type": "object",

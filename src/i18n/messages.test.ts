@@ -1,5 +1,5 @@
 import { ApiError } from '@/lib/api-client'
-import type { Issue } from '@/lib/api-models'
+import type { FileError, Issue } from '@/lib/api-models'
 import i18n from '.'
 import { fieldLabel, translateApiError, translateFileError, translateIssue } from './messages'
 
@@ -57,9 +57,9 @@ describe('translateFileError', () => {
     expect(translateFileError(t, { code: 'NOT_AN_INVOICE', params: {} })).toBe(
       'No parece una factura ni un recibo.',
     )
-    expect(translateFileError(t, { code: 'SOMETHING_NEW', params: {} })).toBe(
-      'No pudimos procesar este archivo.',
-    )
+    expect(
+      translateFileError(t, { code: 'SOMETHING_NEW' as unknown as FileError['code'], params: {} }),
+    ).toBe('No pudimos procesar este archivo.')
   })
 })
 

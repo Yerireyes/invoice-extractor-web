@@ -25,6 +25,7 @@
     "LLM_QUOTA_EXCEEDED": "Se agotó la cuota del servicio de IA por ahora. Vuelve a intentarlo más tarde.",
     "LLM_UNAVAILABLE": "El servicio de IA no responde. Vuelve a intentarlo en unos minutos.",
     "INTERNAL_ERROR": "Error inesperado en el servidor. Vuelve a intentarlo más tarde.",
+    "REQUEST_TOO_LARGE": "Los archivos pesan demasiado en total para enviarlos juntos. Envía menos a la vez.",
     "NETWORK_ERROR": "No hay conexión con el servidor. Comprueba tu conexión a internet.",
     "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo.",
     "TOO_MANY_INVOICES_one": "Puedes exportar como máximo {{count}} factura a la vez. Selecciona menos.",

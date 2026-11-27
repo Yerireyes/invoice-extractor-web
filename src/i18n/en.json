@@ -25,6 +25,7 @@
     "LLM_QUOTA_EXCEEDED": "The AI service quota is used up for now. Try again later.",
     "LLM_UNAVAILABLE": "The AI service isn't responding. Try again in a few minutes.",
     "INTERNAL_ERROR": "Unexpected server error. Try again later.",
+    "REQUEST_TOO_LARGE": "The files are too large in total to send together. Send fewer at a time.",
     "NETWORK_ERROR": "Can't reach the server. Check your internet connection.",
     "UNKNOWN_ERROR": "The server returned an unexpected error. Try again.",
     "TOO_MANY_INVOICES_one": "You can export at most {{count}} invoice at a time. Select fewer.",

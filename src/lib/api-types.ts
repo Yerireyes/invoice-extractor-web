@@ -64,8 +64,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Extract invoices from 1..N files (partial success allowed) */
-        post: operations["extractInvoices"];
+        /** Sube 1..N facturas (imágenes o PDF) y devuelve sus datos extraídos y validados */
+        post: operations["extract_api_v1_invoices_extract_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -110,6 +110,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Body_extract_api_v1_invoices_extract_post */
+        Body_extract_api_v1_invoices_extract_post: {
+            /**
+             * Files
+             * @description Imágenes (JPEG, PNG, WebP) o PDF
+             */
+            files?: string[] | null;
+            /** @description Proveedor de IA; por defecto el de `/meta` */
+            provider?: components["schemas"]["LLMProvider"] | null;
+        };
         /** @enum {string} */
         DocumentType: "invoice" | "receipt" | "credit_note" | "other";
         /**
@@ -117,9 +127,83 @@ export interface components {
          * @description Códigos de error HTTP del contrato (sección 5).
          * @enum {string}
          */
-        ErrorCode: "TOO_MANY_FILES" | "NO_FILES" | "TOO_MANY_INVOICES" | "VALIDATION_ERROR" | "PROVIDER_NOT_AVAILABLE" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "RATE_LIMITED" | "LLM_QUOTA_EXCEEDED" | "LLM_UNAVAILABLE" | "INTERNAL_ERROR";
+        ErrorCode: "TOO_MANY_FILES" | "NO_FILES" | "TOO_MANY_INVOICES" | "VALIDATION_ERROR" | "PROVIDER_NOT_AVAILABLE" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "REQUEST_TOO_LARGE" | "RATE_LIMITED" | "LLM_QUOTA_EXCEEDED" | "LLM_UNAVAILABLE" | "INTERNAL_ERROR";
         /** @enum {string} */
         ExportLanguage: "es" | "en";
+        /** ExtractResponse */
+        ExtractResponse: {
+            /** Results */
+            results: components["schemas"]["ExtractionResult"][];
+            summary: components["schemas"]["ExtractSummary"];
+        };
+        /** ExtractSummary */
+        ExtractSummary: {
+            /** Total */
+            total: number;
+            /** Succeeded */
+            succeeded: number;
+            /** Failed */
+            failed: number;
+        };
+        /** ExtractionFailure */
+        ExtractionFailure: {
+            /** File Name */
+            file_name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            status: "error";
+            error: components["schemas"]["FileError"];
+        };
+        /** ExtractionMeta */
+        ExtractionMeta: {
+            provider: components["schemas"]["LLMProvider"];
+            /** Model */
+            model: string;
+            /** Pages */
+            pages: number;
+            /** Processing Ms */
+            processing_ms: number;
+        };
+        /**
+         * ExtractionResult
+         * @description Resultado por archivo: unión discriminada por `status` (`success` | `error`).
+         */
+        ExtractionResult: components["schemas"]["ExtractionSuccess"] | components["schemas"]["ExtractionFailure"];
+        /** ExtractionSuccess */
+        ExtractionSuccess: {
+            /** File Name */
+            file_name: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            status: "success";
+            invoice: components["schemas"]["Invoice"];
+            validation: components["schemas"]["Validation"];
+            /**
+             * Field Confidence
+             * @description Confianza 0..1 por campo, en notación de ruta (`issuer.tax_id`).
+             */
+            field_confidence?: {
+                [key: string]: number;
+            };
+            meta: components["schemas"]["ExtractionMeta"];
+        };
+        /** FileError */
+        FileError: {
+            code: components["schemas"]["FileErrorCode"];
+            /** Params */
+            params?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * FileErrorCode
+         * @enum {string}
+         */
+        FileErrorCode: "NOT_AN_INVOICE" | "UNREADABLE_FILE" | "UNSUPPORTED_FILE_TYPE" | "FILE_TOO_LARGE" | "PDF_TOO_MANY_PAGES" | "EXTRACTION_FAILED";
         /** HealthResponse */
         HealthResponse: {
             /**
@@ -343,56 +427,6 @@ export interface components {
         };
         /** @enum {string} */
         ValidationStatus: "valid" | "warnings" | "invalid";
-        ExtractionMeta: {
-            provider: components["schemas"]["LLMProvider"];
-            model: string;
-            pages: number;
-            processing_ms: number;
-        };
-        FileError: {
-            /** @description NOT_AN_INVOICE | UNREADABLE_FILE | UNSUPPORTED_FILE_TYPE | FILE_TOO_LARGE | PDF_TOO_MANY_PAGES | EXTRACTION_FAILED */
-            code: string;
-            params: {
-                [key: string]: unknown;
-            };
-        };
-        ExtractionSuccess: {
-            file_name: string;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            status: "success";
-            invoice: components["schemas"]["Invoice"];
-            validation: components["schemas"]["Validation"];
-            field_confidence: {
-                [key: string]: number;
-            };
-            meta: components["schemas"]["ExtractionMeta"];
-        };
-        ExtractionFailure: {
-            file_name: string;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            status: "error";
-            error: components["schemas"]["FileError"];
-        };
-        ExtractionResult: components["schemas"]["ExtractionSuccess"] | components["schemas"]["ExtractionFailure"];
-        ExtractSummary: {
-            total: number;
-            succeeded: number;
-            failed: number;
-        };
-        ExtractResponse: {
-            results: components["schemas"]["ExtractionResult"][];
-            summary: components["schemas"]["ExtractSummary"];
-        };
-        ExtractRequest: {
-            files: string[];
-            provider?: components["schemas"]["LLMProvider"];
-        };
         ExportOptions: {
             language: components["schemas"]["ExportLanguage"];
             include_line_items: boolean;
@@ -491,6 +525,15 @@ export interface operations {
                     "application/json": components["schemas"]["ValidateResponse"];
                 };
             };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
             /** @description Unprocessable Content */
             422: {
                 headers: {
@@ -511,20 +554,20 @@ export interface operations {
             };
         };
     };
-    extractInvoices: {
+    extract_api_v1_invoices_extract_post: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
-                "multipart/form-data": components["schemas"]["ExtractRequest"];
+                "multipart/form-data": components["schemas"]["Body_extract_api_v1_invoices_extract_post"];
             };
         };
         responses: {
-            /** @description OK */
+            /** @description Successful Response */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -533,7 +576,7 @@ export interface operations {
                     "application/json": components["schemas"]["ExtractResponse"];
                 };
             };
-            /** @description File too large */
+            /** @description Content Too Large */
             413: {
                 headers: {
                     [name: string]: unknown;
@@ -542,7 +585,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
-            /** @description Invalid request */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -551,16 +594,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
-            /** @description Rate limited */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
-                };
-            };
-            /** @description Internal error */
+            /** @description Internal Server Error */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -569,7 +603,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
-            /** @description LLM unavailable or quota exceeded */
+            /** @description Service Unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;
