@@ -36,6 +36,7 @@ describe('LanguageSwitcher', () => {
 
     await user.tab() // skip link
     await user.tab() // home link
+    await user.tab() // theme switcher
     await user.tab() // language switcher
     expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveFocus()
 

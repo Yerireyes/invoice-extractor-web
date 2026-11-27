@@ -63,7 +63,7 @@ export function BatchList({
 
       <ul
         aria-label={t('review.batch.listLabel')}
-        className="flex-1 space-y-1 overflow-y-auto px-2"
+        className="relative flex-1 space-y-1 overflow-y-auto px-2"
       >
         {invoices.map((entry) => {
           const active = entry.id === activeId

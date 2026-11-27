@@ -95,7 +95,7 @@ export function InvoiceViewer({ entry, className }: { entry: BatchInvoice; class
         )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto bg-muted/60 p-4 sm:p-6">
+      <div className="relative min-h-0 flex-1 overflow-auto bg-muted/60 p-4 sm:p-6">
         {!url ? null : isPdf ? (
           <object
             data={url}

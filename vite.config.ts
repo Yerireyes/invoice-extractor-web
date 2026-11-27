@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { readFileSync } from 'node:fs'
 import { rm } from 'node:fs/promises'
 import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
@@ -24,8 +25,14 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_')
   const useMocks = (process.env.VITE_USE_MOCKS ?? env.VITE_USE_MOCKS) === 'true'
 
+  const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string }
+
   return {
     plugins: [react(), tailwindcss(), excludeMockWorker(useMocks)],
+    define: {
+      // Shown in the footer; release-please bumps package.json (FRT-DEP-0012).
+      __APP_VERSION__: JSON.stringify(version),
+    },
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname, './src'),

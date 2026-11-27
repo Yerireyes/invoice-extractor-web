@@ -1,7 +1,12 @@
 {
   "app": {
     "name": "Invoice Extractor",
-    "skipToContent": "Saltar al contenido"
+    "skipToContent": "Saltar al contenido",
+    "loading": "Cargando…",
+    "waking": {
+      "title": "Despertando el servidor…",
+      "body": "El servicio gratuito se duerme cuando nadie lo usa; la primera respuesta puede tardar hasta un minuto."
+    }
   },
   "language": {
     "label": "Idioma",
@@ -364,5 +369,27 @@
     "anyway_other": "Exportar de todos modos",
     "working": "Generando el archivo…",
     "done": "Descargado: {{filename}}"
+  },
+  "theme": {
+    "label": "Tema: {{theme}}. Cambiar el tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "footer": {
+    "privacy": "No almacenamos tus facturas: viven solo en esta pestaña y se envían únicamente para leer sus datos.",
+    "source": "Código en GitHub",
+    "newTab": "(se abre en otra pestaña)",
+    "version": "Versión"
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "body": "No hay nada en «{{path}}». Puede que el enlace esté mal escrito o sea antiguo.",
+    "action": "Volver a subir facturas"
+  },
+  "errorPage": {
+    "title": "Algo salió mal",
+    "body": "La página falló al cargarse. Si tenías facturas en revisión, puede que se hayan perdido: vuelve a cargar e inténtalo de nuevo.",
+    "reload": "Volver a cargar"
   }
 }

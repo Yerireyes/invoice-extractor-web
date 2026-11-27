@@ -72,13 +72,15 @@ function setDesktop(matches: boolean) {
   })
 }
 
-function renderReview(path = '/review') {
+async function renderReview(path = '/review') {
   const router = createMemoryRouter(routes, { initialEntries: [path] })
   render(
     <Providers>
       <RouterProvider router={router} />
     </Providers>,
   )
+  // /review is a lazy route: wait for its code before querying the page.
+  await screen.findByRole('heading', { level: 1 })
   return { router, user: userEvent.setup() }
 }
 
@@ -96,8 +98,8 @@ describe('ReviewPage', () => {
     setDesktop(false)
   })
 
-  it('invites to upload when the batch is empty', () => {
-    renderReview()
+  it('invites to upload when the batch is empty', async () => {
+    await renderReview()
     const main = screen.getByRole('main')
     expect(
       within(main).getByRole('heading', { name: 'Todavía no hay facturas para revisar' }),
@@ -111,8 +113,8 @@ describe('ReviewPage', () => {
       seed()
     })
 
-    it('lists the batch with each status and a summary', () => {
-      renderReview()
+    it('lists the batch with each status and a summary', async () => {
+      await renderReview()
       const batch = screen.getByRole('list', { name: 'Facturas del lote' })
       const items = within(batch).getAllByRole('button')
 
@@ -128,7 +130,7 @@ describe('ReviewPage', () => {
     })
 
     it('shows the original next to the form and moves through the batch', async () => {
-      const { router, user } = renderReview()
+      const { router, user } = await renderReview()
 
       expect(panelHeading()).toHaveTextContent('Comercial Ficticia del Norte S.A. de C.V.')
       expect(screen.getByRole('img', { name: 'Imagen original de mx.png' })).toHaveAttribute(
@@ -151,13 +153,13 @@ describe('ReviewPage', () => {
       expect(panelHeading()).toHaveTextContent('Estudio Ejemplo Diseño S.L.')
     })
 
-    it('opens the invoice named in the URL', () => {
-      renderReview('/review?id=us')
+    it('opens the invoice named in the URL', async () => {
+      await renderReview('/review?id=us')
       expect(panelHeading()).toHaveTextContent('Sample Hardware Co.')
     })
 
     it('zooms the original image', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const image = screen.getByRole('img', { name: 'Imagen original de mx.png' })
       expect(image).toHaveStyle({ width: '100%' })
 
@@ -173,8 +175,8 @@ describe('ReviewPage', () => {
       expect(screen.getByRole('button', { name: 'Alejar' })).toBeDisabled()
     })
 
-    it('fills the form with the extracted data', () => {
-      renderReview()
+    it('fills the form with the extracted data', async () => {
+      await renderReview()
       expect(screen.getByLabelText('Tipo de documento')).toHaveValue('invoice')
       expect(screen.getByLabelText('Número de factura')).toHaveValue('A-00123')
       expect(screen.getByLabelText('Fecha de emisión')).toHaveValue('2026-11-20')
@@ -189,7 +191,7 @@ describe('ReviewPage', () => {
     })
 
     it('saves edits to the batch and explains invalid values', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
 
       const number = screen.getByLabelText('Número de factura')
       await user.clear(number)
@@ -207,7 +209,7 @@ describe('ReviewPage', () => {
     })
 
     it('highlights low-confidence fields until the user checks them', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const taxId = within(screen.getByRole('group', { name: 'Emisor' })).getByLabelText(
         /ID fiscal · RFC/,
       )
@@ -221,7 +223,7 @@ describe('ReviewPage', () => {
     })
 
     it('counts editing a doubtful field as checking it', async () => {
-      const { user } = renderReview('/review?id=us')
+      const { user } = await renderReview('/review?id=us')
       const number = screen.getByLabelText('Número de factura')
       expect(number).toHaveAccessibleDescription(/66\s%\sde confianza/)
 
@@ -237,7 +239,7 @@ describe('ReviewPage', () => {
     })
 
     it('switches between the data and the image with tabs', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
 
       expect(screen.getByRole('tab', { name: 'Datos' })).toHaveAttribute('aria-selected', 'true')
       // The picker already navigates; the panel does not repeat it on mobile
@@ -251,7 +253,7 @@ describe('ReviewPage', () => {
     })
 
     it('picks the invoice from a list', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
 
       await user.selectOptions(screen.getByLabelText('Factura a revisar'), 'us')
       expect(panelHeading()).toHaveTextContent('Sample Hardware Co.')
@@ -273,8 +275,8 @@ describe('ReviewPage', () => {
         ])
     })
 
-    it('shows the lines, taxes and totals with the currency format', () => {
-      renderReview()
+    it('shows the lines, taxes and totals with the currency format', async () => {
+      await renderReview()
 
       expect(screen.getByLabelText('Descripción (concepto 1)')).toHaveValue(
         'Servicio de consultoría',
@@ -290,7 +292,7 @@ describe('ReviewPage', () => {
     })
 
     it('reads amounts typed with either separator and keeps the API format in the store', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const total = screen.getByLabelText('Total')
 
       await user.clear(total)
@@ -305,7 +307,7 @@ describe('ReviewPage', () => {
     })
 
     it('flags text that is not a number and keeps the last valid amount', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const subtotal = screen.getByLabelText('Subtotal')
 
       await user.type(subtotal, ' mil')
@@ -316,7 +318,7 @@ describe('ReviewPage', () => {
     })
 
     it('adds and removes line items and taxes', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
 
       await user.click(screen.getByRole('button', { name: 'Agregar concepto' }))
       expect(screen.getByLabelText('Descripción (concepto 2)')).toHaveFocus()
@@ -340,7 +342,7 @@ describe('ReviewPage', () => {
     })
 
     it('explains a doubtful cell and lets the user confirm it', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const amount = screen.getByLabelText('Importe (concepto 1)')
 
       expect(amount).toHaveAccessibleDescription(
@@ -358,7 +360,7 @@ describe('ReviewPage', () => {
     })
 
     it('forgets the doubt of a removed line instead of moving it to the next one', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       await user.click(screen.getByRole('button', { name: 'Agregar concepto' }))
       await user.click(screen.getByRole('button', { name: 'Eliminar el concepto 1' }))
 
@@ -381,7 +383,7 @@ describe('ReviewPage', () => {
     })
 
     it('lists issues and doubts, errors first, and jumps to the field', async () => {
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const items = within(issuesPanel()).getAllByRole('listitem')
 
       expect(items).toHaveLength(2)
@@ -403,7 +405,7 @@ describe('ReviewPage', () => {
       server.events.on('request:start', ({ request }) => {
         if (request.url.endsWith('/invoices/validate')) requests.push(request)
       })
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const batch = screen.getByRole('list', { name: 'Facturas del lote' })
       expect(within(batch).getAllByText('Con errores')).toHaveLength(1)
 
@@ -444,7 +446,7 @@ describe('ReviewPage', () => {
           })
         }),
       )
-      const { user } = renderReview()
+      const { user } = await renderReview()
       const total = screen.getByLabelText('Total')
 
       await user.clear(total)
@@ -466,7 +468,7 @@ describe('ReviewPage', () => {
 
     it('tells the user when the numbers could not be checked', async () => {
       server.use(http.post('*/api/v1/invoices/validate', () => HttpResponse.error()))
-      const { user } = renderReview()
+      const { user } = await renderReview()
 
       await user.type(screen.getByLabelText('Total'), '0')
 

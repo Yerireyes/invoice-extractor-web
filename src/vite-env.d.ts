@@ -7,6 +7,9 @@ interface ImportMetaEnv {
   readonly VITE_USE_MOCKS?: string
 }
 
+/** package.json version, injected at build time. */
+declare const __APP_VERSION__: string
+
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }

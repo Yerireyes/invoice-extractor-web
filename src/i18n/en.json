@@ -1,7 +1,12 @@
 {
   "app": {
     "name": "Invoice Extractor",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "loading": "Loading…",
+    "waking": {
+      "title": "Waking up the server…",
+      "body": "The free service sleeps when nobody uses it; the first answer can take up to a minute."
+    }
   },
   "language": {
     "label": "Language",
@@ -364,5 +369,27 @@
     "anyway_other": "Export anyway",
     "working": "Generating the file…",
     "done": "Downloaded: {{filename}}"
+  },
+  "theme": {
+    "label": "Theme: {{theme}}. Change the theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "footer": {
+    "privacy": "We don’t store your invoices: they live only in this tab and are sent just to read their data.",
+    "source": "Source on GitHub",
+    "newTab": "(opens in a new tab)",
+    "version": "Version"
+  },
+  "notFound": {
+    "title": "This page doesn’t exist",
+    "body": "There is nothing at “{{path}}”. The link may be mistyped or out of date.",
+    "action": "Back to uploading invoices"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "body": "The page failed to load. Invoices you were reviewing may have been lost: reload and try again.",
+    "reload": "Reload"
   }
 }
