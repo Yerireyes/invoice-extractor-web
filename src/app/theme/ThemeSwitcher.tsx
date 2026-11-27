@@ -3,6 +3,7 @@ import { DropdownMenu } from 'radix-ui'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { useHydrated } from '@/lib/use-hydrated'
 import { isThemePreference, THEME_PREFERENCES, useThemeStore, watchSystemTheme } from './theme'
 
 const ICON = { light: SunIcon, dark: MoonIcon, system: MonitorIcon } as const
@@ -11,12 +12,11 @@ const ICON = { light: SunIcon, dark: MoonIcon, system: MonitorIcon } as const
 export function ThemeSwitcher() {
   const { t } = useTranslation()
   const preference = useThemeStore((state) => state.preference)
-  const resolved = useThemeStore((state) => state.resolved)
   const setPreference = useThemeStore((state) => state.setPreference)
+  // The saved preference is unknown to the prerendered HTML: name it once hydrated.
+  const hydrated = useHydrated()
 
   useEffect(() => watchSystemTheme(), [])
-
-  const Current = ICON[resolved]
 
   return (
     <DropdownMenu.Root>
@@ -25,10 +25,14 @@ export function ThemeSwitcher() {
           type="button"
           variant="outline"
           size="icon"
-          aria-label={t('theme.label', { theme: t(`theme.${preference}`) })}
+          aria-label={
+            hydrated ? t('theme.label', { theme: t(`theme.${preference}`) }) : t('theme.change')
+          }
           className="size-9 bg-transparent pointer-fine:size-8"
         >
-          <Current aria-hidden="true" />
+          {/* The class on <html> is set before first paint, so CSS picks the right icon. */}
+          <SunIcon aria-hidden="true" className="dark:hidden" />
+          <MoonIcon aria-hidden="true" className="hidden dark:block" />
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

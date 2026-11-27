@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject } from 'react-router'
+import type { RouteObject } from 'react-router'
 import { UploadPage } from '@/features/upload'
 import { RootLayout, type RouteHandle } from './layout/RootLayout'
 import { ErrorPage } from './ErrorPage'
@@ -34,5 +34,3 @@ export const routes: RouteObject[] = [
     ],
   },
 ]
-
-export const router = createBrowserRouter(routes)

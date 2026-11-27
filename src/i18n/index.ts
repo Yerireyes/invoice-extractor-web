@@ -23,7 +23,8 @@ export function isLanguage(value: unknown): value is Language {
 }
 
 function syncDocumentLanguage(language: string) {
-  document.documentElement.lang = language
+  // Also imported by the prerender (Node), where there is no document.
+  if (typeof document !== 'undefined') document.documentElement.lang = language
 }
 
 void i18n

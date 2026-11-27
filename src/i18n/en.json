@@ -374,7 +374,8 @@
     "label": "Theme: {{theme}}. Change the theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "change": "Change the theme"
   },
   "footer": {
     "privacy": "We don’t store your invoices: they live only in this tab and are sent just to read their data.",
