@@ -1,4 +1,5 @@
 import { ArrowRightIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useFormatters } from '@/i18n/use-formatters'
@@ -6,7 +7,9 @@ import { cn } from '@/lib/utils'
 import type { BatchInvoice } from '@/store/invoices'
 import { issuerLabel } from '../lib/labels'
 import { InvoiceForm } from './InvoiceForm'
+import { ReviewIssues } from './ReviewIssues'
 import { StatusBadge } from './StatusBadge'
+import { reviewStatus } from '@/store/invoices'
 
 interface InvoicePanelProps {
   entry: BatchInvoice
@@ -31,6 +34,16 @@ export function InvoicePanel({
   const { t } = useTranslation()
   const { date } = useFormatters()
   const { invoice } = entry
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  /** "Ir al campo": brings the field into view and focuses it (inputs are named by path). */
+  const goTo = (field: string) => {
+    const target = scrollRef.current?.querySelector<HTMLElement>(`[name="${field}"]`)
+    if (!target) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    target.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' })
+    target.focus({ preventScroll: true })
+  }
 
   return (
     <section
@@ -74,7 +87,7 @@ export function InvoicePanel({
           )}
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
-          <StatusBadge status={entry.validation.status} />
+          <StatusBadge status={reviewStatus(entry)} />
           <span>
             {t(`documentType.${invoice.document_type}`)}
             {invoice.invoice_number && (
@@ -89,7 +102,8 @@ export function InvoicePanel({
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+        <ReviewIssues entry={entry} onGoTo={goTo} />
         <InvoiceForm key={entry.id} entry={entry} />
 
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t px-5 py-4 sm:px-7">
