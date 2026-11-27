@@ -32,6 +32,9 @@
     "TOO_MANY_INVOICES_other": "You can export at most {{count}} invoices at a time. Select fewer.",
     "LLM_QUOTA_EXCEEDED_one": "The AI service quota is used up. Try again in {{count}} second.",
     "LLM_QUOTA_EXCEEDED_other": "The AI service quota is used up. Try again in {{count}} seconds.",
+    "LLM_QUOTA_EXCEEDED_daily": "The demo service has reached its daily limit. Try again tomorrow.",
+    "LLM_QUOTA_EXCEEDED_minutes_one": "The AI service quota is used up. Try again in {{count}} minute.",
+    "LLM_QUOTA_EXCEEDED_minutes_other": "The AI service quota is used up. Try again in {{count}} minutes.",
     "LLM_UNAVAILABLE_one": "The AI service isn't responding. Try again in {{count}} second.",
     "LLM_UNAVAILABLE_other": "The AI service isn't responding. Try again in {{count}} seconds."
   },

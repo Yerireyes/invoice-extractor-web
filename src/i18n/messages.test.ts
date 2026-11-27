@@ -24,6 +24,29 @@ describe('translateApiError', () => {
     )
   })
 
+  it('says "tomorrow" for the daily quota and minutes for shorter waits', () => {
+    const quota = (seconds: number) =>
+      translateApiError(
+        t,
+        new ApiError({
+          code: 'LLM_QUOTA_EXCEEDED',
+          status: 503,
+          params: { retry_after_s: seconds },
+        }),
+      )
+    expect(quota(5 * 3600)).toBe(
+      'Se alcanzó el límite diario del servicio de demostración. Vuelve a intentarlo mañana.',
+    )
+    expect(quota(3600)).toMatch(/mañana/)
+    expect(quota(61)).toBe(
+      'Se agotó la cuota del servicio de IA. Vuelve a intentarlo en 2 minutos.',
+    )
+    expect(quota(60)).toBe('Se agotó la cuota del servicio de IA. Vuelve a intentarlo en 1 minuto.')
+    expect(quota(30)).toBe(
+      'Se agotó la cuota del servicio de IA. Vuelve a intentarlo en 30 segundos.',
+    )
+  })
+
   it('uses the generic wording when a guaranteed param is missing', () => {
     expect(translateApiError(t, new ApiError({ code: 'RATE_LIMITED', status: 429 }))).toBe(
       'Has hecho demasiadas peticiones. Espera un momento y vuelve a intentarlo.',

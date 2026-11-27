@@ -164,7 +164,10 @@ describe('Upload → extract', () => {
   })
 
   it.each([
-    ['quota.png', 'Se agotó la cuota del servicio de IA por ahora. Vuelve a intentarlo más tarde.'],
+    [
+      'quota.png',
+      'Se alcanzó el límite diario del servicio de demostración. Vuelve a intentarlo mañana.',
+    ],
     ['offline.png', 'El servicio de IA no responde. Vuelve a intentarlo en unos minutos.'],
   ])('explains a 503 for %s and keeps the files to retry', async (name, message) => {
     const { user } = renderUpload()

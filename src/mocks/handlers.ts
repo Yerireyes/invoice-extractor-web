@@ -159,7 +159,10 @@ export const handlers = [
     if (MOCK_TRIGGERS.rateLimited.test(names)) {
       return problem(429, 'RATE_LIMITED', { retry_after_s: 30 }, { 'Retry-After': '30' })
     }
-    if (MOCK_TRIGGERS.quota.test(names)) return problem(503, 'LLM_QUOTA_EXCEEDED')
+    // The daily cap: retry_after_s counts the hours until the reset.
+    if (MOCK_TRIGGERS.quota.test(names)) {
+      return problem(503, 'LLM_QUOTA_EXCEEDED', { retry_after_s: 5 * 3600 })
+    }
     if (MOCK_TRIGGERS.unavailable.test(names)) return problem(503, 'LLM_UNAVAILABLE')
 
     await latency(900 + 600 * files.length)

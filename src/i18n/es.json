@@ -32,6 +32,9 @@
     "TOO_MANY_INVOICES_other": "Puedes exportar como máximo {{count}} facturas a la vez. Selecciona menos.",
     "LLM_QUOTA_EXCEEDED_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundo.",
     "LLM_QUOTA_EXCEEDED_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundos.",
+    "LLM_QUOTA_EXCEEDED_daily": "Se alcanzó el límite diario del servicio de demostración. Vuelve a intentarlo mañana.",
+    "LLM_QUOTA_EXCEEDED_minutes_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} minuto.",
+    "LLM_QUOTA_EXCEEDED_minutes_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} minutos.",
     "LLM_UNAVAILABLE_one": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundo.",
     "LLM_UNAVAILABLE_other": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundos."
   },
