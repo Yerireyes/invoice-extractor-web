@@ -17,7 +17,7 @@ describe('mock validateInvoice', () => {
       expect.objectContaining({
         code: 'LINE_AMOUNT_MISMATCH',
         field: 'line_items.1.amount',
-        params: { line: 2, expected: '22.50', actual: '24.50' },
+        params: { line: 1, expected: '22.50', actual: '24.50' },
       }),
     )
   })

@@ -20,6 +20,13 @@ if (typeof window.matchMedia !== 'function') {
   })
 }
 
+// Object URLs (image thumbnails) are not implemented in jsdom.
+let objectUrlCount = 0
+Object.assign(URL, {
+  createObjectURL: () => `blob:test/${String(++objectUrlCount)}`,
+  revokeObjectURL: () => undefined,
+})
+
 // Pointer capture and scrollIntoView are missing in jsdom; Radix (Select, Popover…) needs them.
 Object.assign(Element.prototype, {
   hasPointerCapture: () => false,

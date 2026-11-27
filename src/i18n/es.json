@@ -26,7 +26,13 @@
     "LLM_UNAVAILABLE": "El servicio de IA no responde. Vuelve a intentarlo en unos minutos.",
     "INTERNAL_ERROR": "Error inesperado en el servidor. Vuelve a intentarlo más tarde.",
     "NETWORK_ERROR": "No hay conexión con el servidor. Comprueba tu conexión a internet.",
-    "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo."
+    "UNKNOWN_ERROR": "El servidor respondió con un error inesperado. Vuelve a intentarlo.",
+    "TOO_MANY_INVOICES_one": "Puedes exportar como máximo {{count}} factura a la vez. Selecciona menos.",
+    "TOO_MANY_INVOICES_other": "Puedes exportar como máximo {{count}} facturas a la vez. Selecciona menos.",
+    "LLM_QUOTA_EXCEEDED_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundo.",
+    "LLM_QUOTA_EXCEEDED_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundos.",
+    "LLM_UNAVAILABLE_one": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundo.",
+    "LLM_UNAVAILABLE_other": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundos."
   },
   "fileErrors": {
     "generic": "No pudimos procesar este archivo.",
@@ -35,7 +41,11 @@
     "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa JPG, PNG, WEBP o PDF.",
     "FILE_TOO_LARGE": "El archivo supera el tamaño máximo permitido.",
     "PDF_TOO_MANY_PAGES": "El PDF tiene más páginas de las permitidas.",
-    "EXTRACTION_FAILED": "La IA no pudo extraer los datos. Prueba de nuevo o con una imagen más nítida."
+    "EXTRACTION_FAILED": "La IA no pudo extraer los datos. Prueba de nuevo o con una imagen más nítida.",
+    "FILE_TOO_LARGE_one": "El archivo supera el máximo de {{count}} MB.",
+    "FILE_TOO_LARGE_other": "El archivo supera el máximo de {{count}} MB.",
+    "PDF_TOO_MANY_PAGES_detail_one": "El PDF tiene {{pages}} páginas y el máximo es {{count}}.",
+    "PDF_TOO_MANY_PAGES_detail_other": "El PDF tiene {{pages}} páginas y el máximo es {{count}}."
   },
   "issues": {
     "generic": "Hay un problema con este dato.",
@@ -111,5 +121,59 @@
     "total": "Total",
     "payment_method": "Método de pago",
     "notes": "Notas"
+  },
+  "upload": {
+    "titleLine1": "De la foto al Excel,",
+    "titleLine2": "sin teclear.",
+    "lead": "Sube tus facturas y recibos. La IA extrae los datos, tú los revisas con la imagen al lado y descargas un Excel o PDF.",
+    "steps": {
+      "label": "Cómo funciona",
+      "upload": "Sube",
+      "review": "Revisa",
+      "download": "Descarga"
+    },
+    "dropzone": {
+      "label": "Zona para subir facturas",
+      "title": "Arrastra tus facturas aquí",
+      "titleTouch": "Sube fotos o PDFs de tus facturas",
+      "active": "Suéltalas para añadirlas",
+      "reject": "Alguno de estos archivos no es compatible",
+      "or": "o",
+      "select": "Selecciona archivos",
+      "limits_one": "{{formats}} · hasta {{count}} archivo · máx. {{maxMb}} MB cada uno",
+      "limits_other": "{{formats}} · hasta {{count}} archivos · máx. {{maxMb}} MB cada uno"
+    },
+    "samples": {
+      "question": "¿No tienes facturas a mano?",
+      "action": "Prueba con facturas de ejemplo",
+      "loading": "Cargando ejemplos…",
+      "error": "No se pudieron cargar las facturas de ejemplo. Inténtalo de nuevo.",
+      "alreadyAdded": "Las facturas de ejemplo ya están en la lista."
+    },
+    "privacy": "No almacenamos tus facturas: solo se envían para leer sus datos.",
+    "list": {
+      "heading": "Archivos seleccionados",
+      "ready_one": "{{count}} archivo listo",
+      "ready_other": "{{count}} archivos listos",
+      "problems_one": "{{count}} con problemas",
+      "problems_other": "{{count}} con problemas",
+      "clear": "Quitar todo",
+      "remove": "Quitar {{name}}",
+      "added_one": "Se añadió {{count}} archivo.",
+      "added_other": "Se añadieron {{count}} archivos.",
+      "removed": "Se quitó {{name}}.",
+      "cleared": "Se vació la lista.",
+      "statusReady": "Listo",
+      "statusSkipped": "No se enviará"
+    },
+    "problems": {
+      "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa {{formats}}.",
+      "FILE_TOO_LARGE_one": "Pesa más de {{count}} MB, el máximo por archivo.",
+      "FILE_TOO_LARGE_other": "Pesa más de {{count}} MB, el máximo por archivo.",
+      "EMPTY_FILE": "El archivo está vacío.",
+      "TOO_MANY_FILES_one": "Ya tienes {{count}} archivo, el máximo por envío. Quita alguno para añadir este.",
+      "TOO_MANY_FILES_other": "Ya tienes {{count}} archivos, el máximo por envío. Quita alguno para añadir este.",
+      "DUPLICATE_FILE": "Este archivo ya está en la lista."
+    }
   }
 }

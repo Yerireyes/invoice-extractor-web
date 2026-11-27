@@ -34,3 +34,8 @@ Thumbs.db
 # Never commit real invoices
 *.pdf
 !src/mocks/fixtures/**/*.pdf
+# Fictional sample invoices (synthetic, marked as such); sources in scripts/samples/
+!public/samples/*.pdf
+
+# Visual references (uxpilot), local only
+docs/references/

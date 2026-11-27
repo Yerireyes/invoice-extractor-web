@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/invoices/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revalida una factura editada (no llama a la IA) */
+        post: operations["validate_api_v1_invoices_validate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invoices/extract": {
         parameters: {
             query?: never;
@@ -49,23 +66,6 @@ export interface paths {
         put?: never;
         /** Extract invoices from 1..N files (partial success allowed) */
         post: operations["extractInvoices"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/invoices/validate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Re-validate an edited invoice */
-        post: operations["validateInvoice"];
         delete?: never;
         options?: never;
         head?: never;
@@ -110,6 +110,8 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @enum {string} */
+        DocumentType: "invoice" | "receipt" | "credit_note" | "other";
         /**
          * ErrorCode
          * @description Códigos de error HTTP del contrato (sección 5).
@@ -127,6 +129,69 @@ export interface components {
              */
             status: "ok";
         };
+        /** Invoice */
+        Invoice: {
+            /** @default invoice */
+            document_type: components["schemas"]["DocumentType"];
+            /** Invoice Number */
+            invoice_number?: string | null;
+            /**
+             * Issue Date
+             * @description Obligatorio (validación).
+             */
+            issue_date?: string | null;
+            /** Due Date */
+            due_date?: string | null;
+            /**
+             * Currency
+             * @description Obligatorio (validación).
+             */
+            currency?: string | null;
+            /** Country */
+            country?: string | null;
+            /** Language */
+            language?: string | null;
+            issuer?: components["schemas"]["Party"];
+            recipient?: components["schemas"]["Party"] | null;
+            /** Line Items */
+            line_items?: components["schemas"]["LineItem"][];
+            /** Subtotal */
+            subtotal?: string | null;
+            /** Discount Total */
+            discount_total?: string | null;
+            /** Taxes */
+            taxes?: components["schemas"]["Tax"][];
+            /**
+             * Total
+             * @description Obligatorio (validación).
+             */
+            total?: string | null;
+            /** Payment Method */
+            payment_method?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** Issue */
+        Issue: {
+            code: components["schemas"]["IssueCode"];
+            severity: components["schemas"]["Severity"];
+            /**
+             * Field
+             * @description Ruta del campo, p. ej. `total` o `line_items.0.amount`.
+             */
+            field?: string | null;
+            /** Params */
+            params?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * IssueCode
+         * @enum {string}
+         */
+        IssueCode: "MISSING_REQUIRED_FIELD" | "INVALID_CURRENCY" | "TOTAL_MISMATCH" | "SUBTOTAL_MISMATCH" | "LINE_AMOUNT_MISMATCH" | "TAX_MISMATCH" | "DUE_BEFORE_ISSUE" | "FUTURE_DATE" | "LOW_CONFIDENCE";
+        /** @enum {string} */
+        LLMProvider: "gemini" | "ollama" | "fake";
         /** Limits */
         Limits: {
             /** Max Files Per Request */
@@ -137,6 +202,33 @@ export interface components {
             max_pdf_pages: number;
             /** Max Invoices Per Export */
             max_invoices_per_export: number;
+        };
+        /** LineItem */
+        LineItem: {
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /** Quantity */
+            quantity?: string | null;
+            /** Unit */
+            unit?: string | null;
+            /** Unit Price */
+            unit_price?: string | null;
+            /** Discount */
+            discount?: string | null;
+            /**
+             * Tax Rate
+             * @description Porcentaje (`16` = 16 %).
+             */
+            tax_rate?: string | null;
+            /**
+             * Amount
+             * @description cantidad * precio unitario - descuento
+             * @example 1234.50
+             */
+            amount: string;
         };
         /** MetaResponse */
         MetaResponse: {
@@ -151,10 +243,31 @@ export interface components {
             export_languages: components["schemas"]["ExportLanguage"][];
         };
         /**
-         * ProblemDetail
+         * Party
+         * @description Emisor o receptor. En el emisor, `name` es obligatorio (lo comprueba la validación).
+         */
+        Party: {
+            /** Name */
+            name?: string | null;
+            /** Tax Id */
+            tax_id?: string | null;
+            /**
+             * Tax Id Type
+             * @description Texto libre: RFC, NIF, CUIT, VAT, EIN...
+             */
+            tax_id_type?: string | null;
+            /** Address */
+            address?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Phone */
+            phone?: string | null;
+        };
+        /**
+         * ProblemDetails
          * @description Cuerpo de error RFC 9457 extendido con `code` y `params`.
          */
-        ProblemDetail: {
+        ProblemDetails: {
             /**
              * Type
              * @default about:blank
@@ -187,122 +300,51 @@ export interface components {
                 [key: string]: unknown;
             };
         };
-        /** @enum {string} */
-        ProviderId: "gemini" | "ollama" | "fake";
         /** ProviderInfo */
         ProviderInfo: {
-            id: components["schemas"]["ProviderId"];
+            id: components["schemas"]["LLMProvider"];
             /** Available */
             available: boolean;
             /** Default */
             default: boolean;
         };
         /** @enum {string} */
-        DocumentType: "invoice" | "receipt" | "credit_note" | "other";
-        Party: {
-            /** @description Required for the issuer; nullable for the recipient */
-            name: string | null;
-            /** @description Tax identifier */
-            tax_id?: string | null;
-            /** @description Free text: RFC, NIF, CUIT, VAT, EIN… */
-            tax_id_type?: string | null;
-            /** @description Postal address */
-            address?: string | null;
-            /** @description Email */
-            email?: string | null;
-            /** @description Phone */
-            phone?: string | null;
-        };
-        LineItem: {
-            /** @description Concept description */
-            description: string;
-            /** @description Quantity. Decimal string */
-            quantity?: string | null;
-            /** @description Unit */
-            unit?: string | null;
-            /** @description Unit price. Decimal string */
-            unit_price?: string | null;
-            /** @description Discount. Decimal string */
-            discount?: string | null;
-            /** @description Tax rate, percentage. Decimal string */
-            tax_rate?: string | null;
-            /**
-             * @description quantity × unit_price − discount. Decimal string
-             * @example 1160.00
-             */
-            amount: string;
-        };
+        Severity: "error" | "warning" | "info";
+        /** Tax */
         Tax: {
-            /** @description Tax name (IVA, VAT…) */
-            name: string;
-            /** @description Percentage. Decimal string */
-            rate: string | null;
-            /** @description Taxable base. Decimal string */
-            base: string | null;
+            /** Name */
+            name?: string | null;
             /**
-             * @description Tax amount. Decimal string
-             * @example 1160.00
+             * Rate
+             * @description Porcentaje (`16` = 16 %).
+             */
+            rate?: string | null;
+            /** Base */
+            base?: string | null;
+            /**
+             * Amount
+             * @example 1234.50
              */
             amount: string;
         };
-        Invoice: {
-            document_type: components["schemas"]["DocumentType"];
-            /** @description Invoice number */
-            invoice_number?: string | null;
-            /**
-             * Format: date
-             * @description ISO 8601 date
-             */
-            issue_date: string;
-            /** @description ISO 8601 date */
-            due_date?: string | null;
-            /**
-             * @description ISO 4217
-             * @example MXN
-             */
-            currency: string;
-            /** @description ISO 3166-1 alpha-2 */
-            country?: string | null;
-            /** @description Detected language, ISO 639-1 */
-            language?: string | null;
-            issuer: components["schemas"]["Party"];
-            recipient?: components["schemas"]["Party"] | null;
-            line_items: components["schemas"]["LineItem"][];
-            /** @description Subtotal. Decimal string */
-            subtotal?: string | null;
-            /** @description Total discounts. Decimal string */
-            discount_total?: string | null;
-            taxes: components["schemas"]["Tax"][];
-            /**
-             * @description Total. Decimal string
-             * @example 1160.00
-             */
-            total: string;
-            /** @description Payment method */
-            payment_method?: string | null;
-            /** @description Notes */
-            notes?: string | null;
+        /** ValidateRequest */
+        ValidateRequest: {
+            invoice: components["schemas"]["Invoice"];
         };
-        /** @enum {string} */
-        IssueSeverity: "error" | "warning" | "info";
-        Issue: {
-            /** @description MISSING_REQUIRED_FIELD | INVALID_CURRENCY | TOTAL_MISMATCH | SUBTOTAL_MISMATCH | LINE_AMOUNT_MISMATCH | TAX_MISMATCH | DUE_BEFORE_ISSUE | FUTURE_DATE | LOW_CONFIDENCE */
-            code: string;
-            severity: components["schemas"]["IssueSeverity"];
-            /** @description Path of the affected field (issuer.tax_id, line_items.0.amount) */
-            field: string | null;
-            params: {
-                [key: string]: unknown;
-            };
+        /** ValidateResponse */
+        ValidateResponse: {
+            validation: components["schemas"]["Validation"];
+        };
+        /** Validation */
+        Validation: {
+            status: components["schemas"]["ValidationStatus"];
+            /** Issues */
+            issues?: components["schemas"]["Issue"][];
         };
         /** @enum {string} */
         ValidationStatus: "valid" | "warnings" | "invalid";
-        Validation: {
-            status: components["schemas"]["ValidationStatus"];
-            issues: components["schemas"]["Issue"][];
-        };
         ExtractionMeta: {
-            provider: components["schemas"]["ProviderId"];
+            provider: components["schemas"]["LLMProvider"];
             model: string;
             pages: number;
             processing_ms: number;
@@ -349,13 +391,7 @@ export interface components {
         };
         ExtractRequest: {
             files: string[];
-            provider?: components["schemas"]["ProviderId"];
-        };
-        ValidateRequest: {
-            invoice: components["schemas"]["Invoice"];
-        };
-        ValidateResponse: {
-            validation: components["schemas"]["Validation"];
+            provider?: components["schemas"]["LLMProvider"];
         };
         ExportOptions: {
             language: components["schemas"]["ExportLanguage"];
@@ -399,7 +435,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };
@@ -428,7 +464,49 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    validate_api_v1_invoices_validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValidateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidateResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };
@@ -461,7 +539,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Invalid request */
@@ -470,7 +548,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Rate limited */
@@ -479,7 +557,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Internal error */
@@ -488,7 +566,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description LLM unavailable or quota exceeded */
@@ -497,58 +575,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-        };
-    };
-    validateInvoice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ValidateRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidateResponse"];
-                };
-            };
-            /** @description Invalid request */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Rate limited */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
-                };
-            };
-            /** @description Internal error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };
@@ -582,7 +609,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Rate limited */
@@ -591,7 +618,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Internal error */
@@ -600,7 +627,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };
@@ -634,7 +661,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Rate limited */
@@ -643,7 +670,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
             /** @description Internal error */
@@ -652,7 +679,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ProblemDetail"];
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
         };

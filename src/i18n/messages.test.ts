@@ -128,8 +128,55 @@ describe('translateIssue', () => {
   })
 
   it('falls back for unknown issue codes', () => {
-    expect(translateIssue(t, issue({ code: 'NEW_RULE' }), { currency: 'MXN', locale: 'es' })).toBe(
-      'Hay un problema con este dato.',
+    expect(
+      translateIssue(t, issue({ code: 'NEW_RULE' as unknown as Issue['code'] }), {
+        currency: 'MXN',
+        locale: 'es',
+      }),
+    ).toBe('Hay un problema con este dato.')
+  })
+})
+
+describe('contract params (section 2.2 and 5)', () => {
+  it('interpolates the export limit and optional retry_after_s on 503', () => {
+    expect(
+      translateApiError(
+        t,
+        new ApiError({ code: 'TOO_MANY_INVOICES', status: 422, params: { max_invoices: 100 } }),
+      ),
+    ).toBe('Puedes exportar como máximo 100 facturas a la vez. Selecciona menos.')
+    expect(
+      translateApiError(
+        t,
+        new ApiError({ code: 'LLM_UNAVAILABLE', status: 503, params: { retry_after_s: 30 } }),
+      ),
+    ).toBe('El servicio de IA no responde. Vuelve a intentarlo en 30 segundos.')
+    expect(translateApiError(t, new ApiError({ code: 'LLM_UNAVAILABLE', status: 503 }))).toBe(
+      'El servicio de IA no responde. Vuelve a intentarlo en unos minutos.',
+    )
+  })
+
+  it('details per-file size and page limits when the params are present', () => {
+    expect(translateFileError(t, { code: 'FILE_TOO_LARGE', params: { max_mb: 10 } })).toBe(
+      'El archivo supera el máximo de 10 MB.',
+    )
+    expect(
+      translateFileError(t, { code: 'PDF_TOO_MANY_PAGES', params: { max_pages: 5, pages: 8 } }),
+    ).toBe('El PDF tiene 8 páginas y el máximo es 5.')
+    expect(translateFileError(t, { code: 'PDF_TOO_MANY_PAGES', params: {} })).toBe(
+      'El PDF tiene más páginas de las permitidas.',
+    )
+  })
+
+  it('shows 0-based line params as 1-based', () => {
+    const line: Issue = {
+      code: 'LINE_AMOUNT_MISMATCH',
+      severity: 'warning',
+      field: 'line_items.1.amount',
+      params: { line: 1, expected: '22.50', actual: '24.50' },
+    }
+    expect(translateIssue(t, line, { currency: 'USD', locale: 'en-US' })).toBe(
+      'Concepto 2: el importe debería ser $22.50 (cantidad × precio − descuento), pero es $24.50.',
     )
   })
 })

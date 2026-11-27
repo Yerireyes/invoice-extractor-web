@@ -1,5 +1,6 @@
 // Contract tests for the MSW handlers: the UI is built against these, so they must behave like the API.
 import { apiFetch, apiRequest, isApiError } from '@/lib/api-client'
+import { normalizeValidation } from '@/lib/api-models'
 import type { ExtractResponse, ExportRequest, ValidateResponse } from '@/lib/api-models'
 import { invoiceEur, invoiceMxn } from './fixtures/invoices'
 
@@ -39,7 +40,7 @@ describe('mock /invoices/extract', () => {
     if (result?.status !== 'success') throw new Error('expected success')
 
     expect(result.validation.status).toBe('invalid')
-    expect(result.validation.issues.map((i) => i.code)).toEqual(
+    expect(normalizeValidation(result.validation).issues.map((i) => i.code)).toEqual(
       expect.arrayContaining(['TOTAL_MISMATCH', 'LOW_CONFIDENCE']),
     )
     expect(result.field_confidence['issuer.tax_id']).toBeLessThan(0.7)
@@ -95,7 +96,7 @@ describe('mock /invoices/validate', () => {
 
   it('recomputes issues after an edit fixes the total', async () => {
     const before = await validate(invoiceMxn)
-    expect(before.validation.issues[0]).toMatchObject({
+    expect(normalizeValidation(before.validation).issues[0]).toMatchObject({
       code: 'TOTAL_MISMATCH',
       field: 'total',
       params: { expected: '1160.00', actual: '1150.00' },
