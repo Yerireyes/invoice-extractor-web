@@ -1,0 +1,32 @@
+name: Release
+
+# release-please keeps a release PR open with the next semver version and CHANGELOG.md, built
+# from the conventional commits merged into main. Merging that PR tags the version and publishes
+# the GitHub release, which triggers deploy.yml.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: PR de release y versión
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: googleapis/release-please-action@v5
+        with:
+          # A token other than GITHUB_TOKEN: events created with GITHUB_TOKEN start no other
+          # workflows, so the release PR would never run CI (required checks) and publishing the
+          # release would not trigger the deploy. See "Despliegue" in the README.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
