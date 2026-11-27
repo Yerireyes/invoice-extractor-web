@@ -10,7 +10,7 @@ describe('selection store', () => {
     vi.restoreAllMocks()
   })
 
-  it('adds files with previews for images only and reports how many were added', () => {
+  it('adds files with object URLs for images and PDFs and reports how many were added', () => {
     const added = useSelectionStore
       .getState()
       .add(
@@ -24,7 +24,7 @@ describe('selection store', () => {
     const { items } = useSelectionStore.getState()
     expect(added).toBe(2)
     expect(items[0]?.previewUrl).toMatch(/^blob:/)
-    expect(items[1]?.previewUrl).toBeNull()
+    expect(items[1]?.previewUrl).toMatch(/^blob:/)
     expect(selectReadyFiles(useSelectionStore.getState())).toHaveLength(2)
   })
 

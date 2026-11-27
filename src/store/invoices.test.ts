@@ -1,5 +1,5 @@
 import { normalizeInvoice } from '@/lib/api-models'
-import { useInvoicesStore, type BatchInvoice } from './invoices'
+import { needsCheck, useInvoicesStore, type BatchInvoice } from './invoices'
 
 const entry = (id: string, previewUrl: string | null = `blob:${id}`): BatchInvoice => ({
   id,
@@ -10,9 +10,34 @@ const entry = (id: string, previewUrl: string | null = `blob:${id}`): BatchInvoi
   validation: { status: 'valid', issues: [] },
   fieldConfidence: {},
   meta: null,
+  confirmedFields: [],
 })
 
 describe('invoices store', () => {
+  it('updates an invoice and records checked fields once', () => {
+    useInvoicesStore.getState().add([entry('a'), entry('b')])
+    const edited = { ...entry('a').invoice, invoice_number: 'X-1' }
+
+    useInvoicesStore.getState().updateInvoice('a', edited)
+    useInvoicesStore.getState().confirmField('a', 'issuer.tax_id')
+    useInvoicesStore.getState().confirmField('a', 'issuer.tax_id')
+
+    const [a, b] = useInvoicesStore.getState().invoices
+    expect(a?.invoice.invoice_number).toBe('X-1')
+    expect(a?.confirmedFields).toEqual(['issuer.tax_id'])
+    expect(b?.invoice.invoice_number).toBeNull()
+  })
+
+  it('flags low-confidence fields until they are checked', () => {
+    const invoice = { ...entry('a'), fieldConfidence: { total: 0.98, 'issuer.tax_id': 0.62 } }
+    expect(needsCheck(invoice, 'issuer.tax_id')).toBe(true)
+    expect(needsCheck(invoice, 'total')).toBe(false)
+    expect(needsCheck(invoice, 'issue_date')).toBe(false)
+    expect(needsCheck({ ...invoice, confirmedFields: ['issuer.tax_id'] }, 'issuer.tax_id')).toBe(
+      false,
+    )
+  })
+
   afterEach(() => {
     useInvoicesStore.getState().clear()
     vi.restoreAllMocks()

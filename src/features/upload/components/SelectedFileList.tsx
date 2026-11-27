@@ -197,7 +197,7 @@ function Thumbnail({
   broken: boolean
 }) {
   const frame = 'size-11 overflow-hidden rounded-md border bg-card'
-  if (previewUrl) {
+  if (previewUrl && !isPdf) {
     return (
       <span className={frame}>
         <img src={previewUrl} alt="" className="size-full object-cover object-top" />

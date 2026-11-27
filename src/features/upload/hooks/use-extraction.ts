@@ -57,6 +57,7 @@ export function pairResults(
       validation: normalizeValidation(result.validation),
       fieldConfidence: result.field_confidence ?? {},
       meta: result.meta,
+      confirmedFields: [],
     })
   })
 
