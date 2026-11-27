@@ -111,6 +111,27 @@ npm run sync:api   # contrato publicado + openapi/provisional.json → openapi/o
 
 `openapi/provisional.json` cubre los endpoints que el backend aún no ha publicado (derivados de `api-contract.md`). Lo publicado siempre tiene prioridad y lo provisional se marca con `x-provisional: true`, así que desaparece solo en cuanto el backend publica cada endpoint.
 
+## Versiones y despliegue
+
+- **Versiones**: [release-please](https://github.com/googleapis/release-please) mantiene abierto un PR de release con la siguiente versión semver y el `CHANGELOG.md`, calculados a partir de los commits convencionales de `main` (los títulos de los PR empiezan por el tipo: `feat(export): exportar [FRT-EXP-0010]`). Al fusionar ese PR se crea la etiqueta y el release en GitHub. La versión se ve en el footer.
+- **Producción**: solo al **publicar un release** (`deploy.yml`): `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod` y un smoke test (`/` y `/review` deben responder 200). Los push a `main` no despliegan a producción.
+- **Previews**: cada PR tiene su URL de preview de Vercel **con mocks**, para revisar la UI sin backend.
+
+### Pasos manuales (una sola vez)
+
+1. **Vercel**: importa el repositorio como proyecto nuevo (framework Vite; `vercel.json` ya fija build, salida, fallback SPA y caché). En _Settings → Environment Variables_ añade `VITE_USE_MOCKS=true` solo para **Preview**. Producción no necesita variables en Vercel: el build se hace en GitHub Actions.
+2. **IDs del proyecto**: con la CLI, `npx vercel link` en local crea `.vercel/project.json` con `orgId` y `projectId` (la carpeta `.vercel/` no se sube).
+3. **Token de Vercel**: en _Account Settings → Tokens_, crea uno para GitHub Actions.
+4. **Secretos de GitHub** (_Settings → Secrets and variables → Actions_):
+   - `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+   - `RELEASE_PLEASE_TOKEN`: un token personal _fine-grained_ con permisos de **Contents** y **Pull requests** (lectura y escritura) sobre este repositorio. Hace falta porque lo que crea el `GITHUB_TOKEN` no dispara otros workflows: sin él, el PR de release no pasaría el CI obligatorio y publicar el release no desplegaría.
+5. **Variables de GitHub** (misma pantalla, pestaña _Variables_):
+   - `VITE_API_URL` = `https://invoice-extractor-api-latest.onrender.com` (URL pública del backend, sin `/api/v1`).
+   - `PRODUCTION_URL` (opcional) = el dominio de producción de Vercel, para el smoke test; sin ella se prueba la URL del despliegue.
+6. **CORS del backend**: envía por el buzón la URL de producción de Vercel para que el backend la añada a `ALLOWED_ORIGINS`.
+
+> El backend está en el plan gratuito de Render y se duerme tras 15 min sin tráfico: la primera respuesta puede tardar ~1 min. La app lo despierta al cargar (pide `/meta`) y lo explica con el aviso «Despertando el servidor…».
+
 ## Estructura
 
 ```

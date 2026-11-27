@@ -135,7 +135,7 @@ Formato: `<tipo>(<modulo>): <descripción en español, minúscula, sin punto fin
 ### Pull requests
 
 - Al terminar: `git push -u origin <rama>` y `gh pr create`.
-- Título: `[FRT-UPL-0005] feat(upload): zona para arrastrar y soltar archivos`
+- Título: `feat(upload): zona para arrastrar y soltar archivos [FRT-UPL-0005]`, siempre empezando por el tipo: con squash, el título es el commit que llega a `main`, y release-please solo lee commits convencionales (versión y CHANGELOG).
 - Cuerpo: qué se hizo, criterios de aceptación marcados, cómo probarlo, **capturas** si hay cambios visuales.
 - **No hagas merge sin la aprobación del usuario.** Merge con squash. Después: `git checkout main && git pull`, borra la rama local y marca la historia como `hecha`.
 
@@ -227,8 +227,8 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 | FRT-REV-0008 | `feat/invoice-review/frt-rev-0008` | hecha |
 | FRT-REV-0009 | `feat/invoice-review/frt-rev-0009` | hecha |
 | FRT-EXP-0010 | `feat/export/frt-exp-0010` | hecha |
-| FRT-APP-0011 | `feat/app/frt-app-0011` | en curso |
-| FRT-DEP-0012 | `chore/deploy/frt-dep-0012` | pendiente |
+| FRT-APP-0011 | `feat/app/frt-app-0011` | hecha |
+| FRT-DEP-0012 | `chore/deploy/frt-dep-0012` | en curso |
 | FRT-APP-0013 | `feat/app/frt-app-0013` | pendiente |
 
 ### FRT-APP-0001 — Estructura base del proyecto
