@@ -1,0 +1,80 @@
+name: Deploy
+
+# Production deploys happen only when a release is published (main has Vercel's automatic
+# production deploys turned off in vercel.json); PR previews keep coming from Vercel's Git
+# integration, with mocks. Can also be run by hand for the latest release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_CLI: vercel@67.0.0
+
+jobs:
+  deploy:
+    name: Producción en Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Traer la configuración de producción de Vercel
+        run: npx --yes "$VERCEL_CLI" pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Build de producción
+        env:
+          # Build-time variables (Vite inlines them). The API URL comes from a repository
+          # variable so it can change without touching the workflow.
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_USE_MOCKS: 'false'
+        run: |
+          if [ -z "$VITE_API_URL" ]; then
+            echo "::error::Falta la variable de repositorio VITE_API_URL (URL pública del backend)."
+            exit 1
+          fi
+          npx --yes "$VERCEL_CLI" build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Desplegar
+        id: deploy
+        run: |
+          url=$(npx --yes "$VERCEL_CLI" deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Desplegado en $url"
+
+      - name: Smoke test
+        env:
+          URL: ${{ vars.PRODUCTION_URL || steps.deploy.outputs.url }}
+        run: |
+          # The home page and a deep link (SPA fallback) must answer 200.
+          for path in / /review; do
+            for attempt in 1 2 3 4 5; do
+              status=$(curl -s -o /dev/null -w '%{http_code}' "$URL$path") || status=000
+              [ "$status" = 200 ] && break
+              echo "Intento $attempt: $URL$path respondió $status; reintentando…"
+              sleep 10
+            done
+            if [ "$status" != 200 ]; then
+              echo "::error::$URL$path respondió $status"
+              exit 1
+            fi
+            echo "OK $URL$path → 200"
+          done

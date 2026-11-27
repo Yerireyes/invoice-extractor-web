@@ -39,3 +39,6 @@ Thumbs.db
 
 # Visual references (uxpilot), local only
 docs/references/
+
+# Vercel CLI (project link, pulled settings)
+.vercel/
