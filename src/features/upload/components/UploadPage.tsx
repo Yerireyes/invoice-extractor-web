@@ -1,13 +1,17 @@
 import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { useFormatters } from '@/i18n/use-formatters'
+import { useInvoicesStore } from '@/store/invoices'
+import { useExtraction } from '../hooks/use-extraction'
 import { useUploadRules } from '../hooks/use-upload-rules'
 import { formatList } from '../lib/problem-text'
 import { loadSampleFiles } from '../lib/samples'
 import { fileKey, type Candidate } from '../lib/selection'
-import { useSelectionStore } from '../selection-store'
+import { selectReadyFiles, useSelectionStore } from '../selection-store'
 import { DropZone } from './DropZone'
+import { ExtractPanel } from './ExtractPanel'
 import { SelectedFileList } from './SelectedFileList'
 import { UploadAside } from './UploadAside'
 
@@ -15,7 +19,9 @@ export function UploadPage() {
   const { t } = useTranslation()
   const { locale } = useFormatters()
   const rules = useUploadRules()
+  const navigate = useNavigate()
   const { items, add, remove, clear } = useSelectionStore()
+  const batchCount = useInvoicesStore((state) => state.invoices.length)
   const [announcement, setAnnouncement] = useState('')
   const [loadingSamples, setLoadingSamples] = useState(false)
   const titleId = useId()
@@ -26,6 +32,22 @@ export function UploadPage() {
     count: rules.limits.max_files_per_request,
     maxMb: rules.limits.max_file_size_mb,
   })
+
+  const extraction = useExtraction({
+    onComplete: ({ succeeded, failed }) => {
+      if (failed === 0) {
+        void navigate('/review')
+        return
+      }
+      setAnnouncement(
+        succeeded > 0
+          ? t('upload.extract.resultPartial', { succeeded, total: succeeded + failed })
+          : t('upload.extract.resultNone'),
+      )
+    },
+  })
+  const sendable = selectReadyFiles({ items })
+  const isRetry = sendable.length > 0 && sendable.every((item) => item.extractionError)
 
   function addCandidates(candidates: Candidate[]) {
     if (candidates.length === 0) return
@@ -106,6 +128,22 @@ export function UploadPage() {
             onClear={() => {
               clear()
               setAnnouncement(t('upload.list.cleared'))
+            }}
+            inFlightIds={extraction.inFlightIds}
+          />
+        )}
+
+        {(items.length > 0 || batchCount > 0) && (
+          <ExtractPanel
+            phase={extraction.phase}
+            sendableCount={sendable.length}
+            isRetry={isRetry}
+            batchCount={batchCount}
+            error={extraction.error}
+            retryAt={extraction.retryAt}
+            isDemo={rules.isDemo}
+            onExtract={() => {
+              extraction.extract(sendable)
             }}
           />
         )}

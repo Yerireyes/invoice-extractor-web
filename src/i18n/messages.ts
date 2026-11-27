@@ -33,7 +33,7 @@ const HTTP_COUNT_PARAMS: Partial<Record<string, string>> = {
 /** Text for a per-file error inside /extract results (contract section 2.2). */
 export function translateFileError(t: TFunction, error: FileError): string {
   const keys = [`fileErrors.${error.code}`, 'fileErrors.generic']
-  const params = error.params
+  const params = error.params ?? {}
 
   if (error.code === 'FILE_TOO_LARGE') {
     const count = asNumber(params.max_mb)

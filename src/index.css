@@ -195,3 +195,13 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Indeterminate progress (AI reading stage): a segment travels across the track. */
+@keyframes progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}

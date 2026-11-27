@@ -50,3 +50,36 @@ describe('selection store', () => {
     expect(useSelectionStore.getState().items).toEqual([])
   })
 })
+
+describe('selection store hand-over', () => {
+  afterEach(() => {
+    useSelectionStore.getState().clear()
+    vi.restoreAllMocks()
+  })
+
+  it('records extraction errors per item', () => {
+    useSelectionStore.getState().add([{ file: image('a.png') }, { file: image('b.png') }], rules)
+    const [a, b] = useSelectionStore.getState().items
+
+    useSelectionStore
+      .getState()
+      .setExtractionErrors(new Map([[a?.id ?? '', { code: 'NOT_AN_INVOICE', params: {} }]]))
+
+    const items = useSelectionStore.getState().items
+    expect(items[0]?.extractionError).toEqual({ code: 'NOT_AN_INVOICE', params: {} })
+    expect(items[1]?.extractionError).toBeNull()
+    expect(items[1]?.id).toBe(b?.id)
+  })
+
+  it('takes items without revoking their previews', () => {
+    const revoke = vi.spyOn(URL, 'revokeObjectURL')
+    useSelectionStore.getState().add([{ file: image('a.png') }, { file: image('b.png') }], rules)
+    const [a] = useSelectionStore.getState().items
+
+    const taken = useSelectionStore.getState().take([a?.id ?? ''])
+
+    expect(taken.map((item) => item.file.name)).toEqual(['a.png'])
+    expect(useSelectionStore.getState().items.map((item) => item.file.name)).toEqual(['b.png'])
+    expect(revoke).not.toHaveBeenCalled()
+  })
+})

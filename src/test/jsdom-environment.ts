@@ -24,6 +24,9 @@ const jsdomWithNodeFetch: Environment = {
     const native = Object.fromEntries(FETCH_GLOBALS.map((key) => [key, global[key]]))
     const env = await builtinEnvironments.jsdom.setup(global, options)
     Object.assign(global, native)
+    // jsdom's XMLHttpRequest cannot send Node's FormData either; without it, apiUpload falls back
+    // to fetch (intercepted by MSW). The XHR path is unit-tested with a fake XMLHttpRequest.
+    delete global.XMLHttpRequest
     return env
   },
 }

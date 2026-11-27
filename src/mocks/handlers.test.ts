@@ -43,7 +43,7 @@ describe('mock /invoices/extract', () => {
     expect(normalizeValidation(result.validation).issues.map((i) => i.code)).toEqual(
       expect.arrayContaining(['TOTAL_MISMATCH', 'LOW_CONFIDENCE']),
     )
-    expect(result.field_confidence['issuer.tax_id']).toBeLessThan(0.7)
+    expect(result.field_confidence?.['issuer.tax_id']).toBeLessThan(0.7)
   })
 
   it('rotates fixtures with different currencies', async () => {

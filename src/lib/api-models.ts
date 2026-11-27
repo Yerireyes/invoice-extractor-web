@@ -55,6 +55,8 @@ export type ExtractionResult = Schemas['ExtractionResult']
 export type ExtractionSuccess = Schemas['ExtractionSuccess']
 export type ExtractionFailure = Schemas['ExtractionFailure']
 export type FileError = Schemas['FileError']
+export type FileErrorCode = Schemas['FileErrorCode']
+export type ExtractionMeta = Schemas['ExtractionMeta']
 
 export type ValidateRequest = Schemas['ValidateRequest']
 export type ValidateResponse = Schemas['ValidateResponse']

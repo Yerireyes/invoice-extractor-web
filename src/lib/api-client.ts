@@ -63,6 +63,18 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+function problemToApiError(body: unknown, status: number): ApiError {
+  if (isRecord(body) && typeof body.code === 'string') {
+    return new ApiError({
+      code: body.code,
+      status,
+      params: isRecord(body.params) ? body.params : {},
+      detail: typeof body.detail === 'string' ? body.detail : undefined,
+    })
+  }
+  return new ApiError({ code: CLIENT_ERROR_CODES.unknown, status })
+}
+
 async function toApiError(response: Response): Promise<ApiError> {
   let body: unknown
   try {
@@ -70,17 +82,7 @@ async function toApiError(response: Response): Promise<ApiError> {
   } catch {
     body = undefined
   }
-
-  if (isRecord(body) && typeof body.code === 'string') {
-    return new ApiError({
-      code: body.code,
-      status: response.status,
-      params: isRecord(body.params) ? body.params : {},
-      detail: typeof body.detail === 'string' ? body.detail : undefined,
-    })
-  }
-
-  return new ApiError({ code: CLIENT_ERROR_CODES.unknown, status: response.status })
+  return problemToApiError(body, response.status)
 }
 
 /**
@@ -115,4 +117,79 @@ export async function apiFetch<T>(
     body: json !== undefined ? JSON.stringify(json) : init.body,
   })
   return (await response.json()) as T
+}
+
+export interface UploadProgress {
+  loaded: number
+  total: number
+}
+
+/**
+ * Multipart POST with upload progress (fetch cannot report it). Same contract as apiFetch:
+ * resolves with the parsed JSON on 2xx, throws ApiError otherwise, re-throws AbortError.
+ * Falls back to fetch (no progress) where XMLHttpRequest does not exist.
+ */
+export function apiUpload<T>(
+  path: string,
+  body: FormData,
+  {
+    onUploadProgress,
+    onUploadDone,
+    signal,
+  }: {
+    onUploadProgress?: (progress: UploadProgress) => void
+    /** The request body was fully sent; the server is now working on it. */
+    onUploadDone?: () => void
+    signal?: AbortSignal
+  } = {},
+): Promise<T> {
+  if (signal?.aborted) {
+    return Promise.reject(new DOMException('The operation was aborted.', 'AbortError'))
+  }
+  if (typeof XMLHttpRequest === 'undefined') {
+    return apiFetch<T>(path, { method: 'POST', body, signal })
+  }
+
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', apiUrl(path))
+    xhr.setRequestHeader('Accept', 'application/json')
+
+    const onAbort = () => {
+      xhr.abort()
+    }
+    signal?.addEventListener('abort', onAbort, { once: true })
+    const cleanup = () => {
+      signal?.removeEventListener('abort', onAbort)
+    }
+
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) onUploadProgress?.({ loaded: event.loaded, total: event.total })
+    })
+    xhr.upload.addEventListener('load', () => {
+      onUploadDone?.()
+    })
+
+    xhr.addEventListener('load', () => {
+      cleanup()
+      let parsed: unknown
+      try {
+        parsed = xhr.responseText ? JSON.parse(xhr.responseText) : undefined
+      } catch {
+        parsed = undefined
+      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(parsed as T)
+      else reject(problemToApiError(parsed, xhr.status))
+    })
+    xhr.addEventListener('error', () => {
+      cleanup()
+      reject(new ApiError({ code: CLIENT_ERROR_CODES.network, status: 0 }))
+    })
+    xhr.addEventListener('abort', () => {
+      cleanup()
+      reject(new DOMException('The operation was aborted.', 'AbortError'))
+    })
+
+    xhr.send(body)
+  })
 }

@@ -1,5 +1,5 @@
 import { CLIENT_ERROR_CODES } from '@/lib/api-client'
-import type { ErrorCode } from '@/lib/api-models'
+import type { ErrorCode, FileErrorCode } from '@/lib/api-models'
 
 // Every code the contract can return. The tests check that each one has a translation in every
 // language, so a new code in the contract shows up as a failing test instead of a raw key.
@@ -16,6 +16,7 @@ export const HTTP_ERROR_CODES = [
   'RATE_LIMITED',
   'LLM_QUOTA_EXCEEDED',
   'LLM_UNAVAILABLE',
+  'REQUEST_TOO_LARGE',
   'INTERNAL_ERROR',
 ] as const satisfies readonly ErrorCode[]
 
@@ -36,7 +37,12 @@ export const FILE_ERROR_CODES = [
   'FILE_TOO_LARGE',
   'PDF_TOO_MANY_PAGES',
   'EXTRACTION_FAILED',
-] as const
+] as const satisfies readonly FileErrorCode[]
+
+type MissingFileCodes = Exclude<FileErrorCode, (typeof FILE_ERROR_CODES)[number]>
+export const FILE_CODES_ARE_EXHAUSTIVE: [MissingFileCodes] extends [never]
+  ? true
+  : MissingFileCodes = true
 
 /** Validation issues (contract section 4). */
 export const ISSUE_CODES = [
