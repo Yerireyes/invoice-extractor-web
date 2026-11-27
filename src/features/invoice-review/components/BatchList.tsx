@@ -5,7 +5,7 @@ import { Link } from 'react-router'
 import { useFormatters } from '@/i18n/use-formatters'
 import type { ValidationStatus } from '@/lib/api-models'
 import { cn } from '@/lib/utils'
-import type { BatchInvoice } from '@/store/invoices'
+import { reviewStatus, type BatchInvoice } from '@/store/invoices'
 import { issuerLabel } from '../lib/labels'
 import { StatusBadge } from './StatusBadge'
 
@@ -29,7 +29,7 @@ export function BatchList({
   const headingId = useId()
 
   const counts = invoices.reduce<Record<ValidationStatus, number>>(
-    (acc, entry) => ({ ...acc, [entry.validation.status]: acc[entry.validation.status] + 1 }),
+    (acc, entry) => ({ ...acc, [reviewStatus(entry)]: acc[reviewStatus(entry)] + 1 }),
     { valid: 0, warnings: 0, invalid: 0 },
   )
   const summary = (['valid', 'warnings', 'invalid'] as const).filter((status) => counts[status] > 0)
@@ -99,7 +99,7 @@ export function BatchList({
                   </span>
                   <span className="shrink-0 font-mono">{invoice.currency}</span>
                 </span>
-                <StatusBadge status={entry.validation.status} className="mt-2" />
+                <StatusBadge status={reviewStatus(entry)} className="mt-2" />
               </button>
             </li>
           )

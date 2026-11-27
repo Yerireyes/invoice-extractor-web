@@ -322,6 +322,21 @@
     "rows": {
       "actions": "Actions",
       "note": "{{field}}: {{message}}"
+    },
+    "issues": {
+      "title": "To review",
+      "none": "The numbers add up and there is nothing left to review.",
+      "noneShort": "Nothing to review",
+      "goTo": "Go to field",
+      "goToLabel": "Go to the “{{field}}” field",
+      "count": {
+        "error_one": "{{count}} error",
+        "error_other": "{{count}} errors",
+        "warning_one": "{{count}} warning",
+        "warning_other": "{{count}} warnings",
+        "info_one": "{{count}} note",
+        "info_other": "{{count}} notes"
+      }
     }
   }
 }

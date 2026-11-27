@@ -322,6 +322,21 @@
     "rows": {
       "actions": "Acciones",
       "note": "{{field}}: {{message}}"
+    },
+    "issues": {
+      "title": "Por revisar",
+      "none": "Los números cuadran y no queda nada por revisar.",
+      "noneShort": "Nada por revisar",
+      "goTo": "Ir al campo",
+      "goToLabel": "Ir al campo «{{field}}»",
+      "count": {
+        "error_one": "{{count}} error",
+        "error_other": "{{count}} errores",
+        "warning_one": "{{count}} aviso",
+        "warning_other": "{{count}} avisos",
+        "info_one": "{{count}} nota",
+        "info_other": "{{count}} notas"
+      }
     }
   }
 }

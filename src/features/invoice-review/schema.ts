@@ -1,3 +1,4 @@
+import { get } from 'react-hook-form'
 import { z } from 'zod'
 import type { DocumentType, Invoice, LineItem, Party, Tax } from '@/lib/api-models'
 import { API_DECIMAL } from '@/lib/money'
@@ -220,4 +221,12 @@ export function applyFormValues(invoice: Invoice, values: InvoiceFormValues): In
     discount_total: decimal(values.discount_total, invoice.discount_total),
     total: decimal(values.total, invoice.total),
   }
+}
+
+/** Fields the form keeps but does not show (the line's unit), so nothing can jump to them. */
+const HIDDEN_FIELDS = /^line_items\.\d+\.unit$/
+
+/** Whether the form shows an input for a contract field path such as `line_items.0.amount`. */
+export function hasFormField(invoice: Invoice, path: string): boolean {
+  return typeof get(toFormValues(invoice), path) === 'string' && !HIDDEN_FIELDS.test(path)
 }
