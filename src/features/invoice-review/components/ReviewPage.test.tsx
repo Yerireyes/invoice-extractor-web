@@ -1,11 +1,27 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { Providers } from '@/app/providers'
 import { routes } from '@/app/router'
-import type { Invoice, ValidationStatus } from '@/lib/api-models'
+import type { Invoice, Issue, ValidationStatus } from '@/lib/api-models'
 import { invoiceEur, invoiceMxn, receiptUsd } from '@/mocks/fixtures/invoices'
+import { server } from '@/mocks/node'
 import { useInvoicesStore, type BatchInvoice } from '@/store/invoices'
+
+/** An issue that explains each status, as the API would send it. */
+const ISSUES_FOR: Record<ValidationStatus, Issue[]> = {
+  valid: [],
+  warnings: [{ code: 'FUTURE_DATE', severity: 'warning', field: 'issue_date', params: {} }],
+  invalid: [
+    {
+      code: 'TOTAL_MISMATCH',
+      severity: 'error',
+      field: 'total',
+      params: { expected: '1160.00', actual: '1150.00' },
+    },
+  ],
+}
 
 function entry(
   id: string,
@@ -22,7 +38,7 @@ function entry(
     }),
     previewUrl: `blob:${id}`,
     invoice,
-    validation: { status, issues: [] },
+    validation: { status, issues: ISSUES_FOR[status] },
     fieldConfidence: {},
     meta: null,
     confirmedFields: [],
@@ -348,6 +364,115 @@ describe('ReviewPage', () => {
 
       expect(screen.queryByRole('button', { name: /como correcto/ })).not.toBeInTheDocument()
       expect(present(useInvoicesStore.getState().invoices[0]).fieldConfidence).toEqual({})
+    })
+  })
+
+  describe('live validation', () => {
+    const issuesPanel = () => screen.getByRole('region', { name: 'Por revisar' })
+
+    beforeEach(() => {
+      setDesktop(true)
+      useInvoicesStore
+        .getState()
+        .add([
+          entry('mx', invoiceMxn, 'invalid', { fieldConfidence: { 'issuer.tax_id': 0.62 } }),
+          entry('es-pdf', invoiceEur, 'valid'),
+        ])
+    })
+
+    it('lists issues and doubts, errors first, and jumps to the field', async () => {
+      const { user } = renderReview()
+      const items = within(issuesPanel()).getAllByRole('listitem')
+
+      expect(items).toHaveLength(2)
+      expect(items[0]).toHaveTextContent(/Error: El total no cuadra.*1\s?160,00/)
+      expect(items[0]).toHaveTextContent('Total')
+      expect(items[1]).toHaveTextContent(/La IA no está segura de este dato \(62\s%/)
+      expect(within(issuesPanel()).getByText('1 error')).toBeInTheDocument()
+      expect(within(issuesPanel()).getByText('1 aviso')).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Ir al campo «Total»' }))
+      expect(screen.getByLabelText('Total')).toHaveFocus()
+
+      await user.click(screen.getByRole('button', { name: 'Ir al campo «ID fiscal del emisor»' }))
+      expect(document.activeElement).toHaveAttribute('name', 'issuer.tax_id')
+    })
+
+    it('revalidates after editing and updates the panel and the batch list', async () => {
+      const requests: unknown[] = []
+      server.events.on('request:start', ({ request }) => {
+        if (request.url.endsWith('/invoices/validate')) requests.push(request)
+      })
+      const { user } = renderReview()
+      const batch = screen.getByRole('list', { name: 'Facturas del lote' })
+      expect(within(batch).getAllByText('Con errores')).toHaveLength(1)
+
+      const total = screen.getByLabelText('Total')
+      await user.clear(total)
+      await user.type(total, '1160')
+      // Typing is debounced: nothing is sent while the numbers are still changing.
+      expect(requests).toHaveLength(0)
+
+      await waitFor(() => {
+        expect(within(issuesPanel()).queryByText(/El total no cuadra/)).not.toBeInTheDocument()
+      })
+      expect(requests).toHaveLength(1)
+      expect(within(batch).queryByText('Con errores')).not.toBeInTheDocument()
+      // The AI's doubt is still there until the user checks it.
+      expect(within(batch).getByText('Con advertencias')).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: /Marcar «ID fiscal.*» como correcto/ }))
+      expect(within(issuesPanel()).getByText(/no queda nada por revisar/)).toBeInTheDocument()
+      expect(within(batch).getAllByText('Válida')).toHaveLength(2)
+      server.events.removeAllListeners()
+    })
+
+    it('keeps only the answer about the latest numbers', async () => {
+      let calls = 0
+      server.use(
+        http.post('*/api/v1/invoices/validate', async ({ request }) => {
+          calls += 1
+          const first = calls === 1
+          const body = (await request.json()) as { invoice: Invoice }
+          // The first answer arrives late and says the (old) total is wrong.
+          if (first) await new Promise((resolve) => setTimeout(resolve, 300))
+          return HttpResponse.json({
+            validation: first
+              ? { status: 'invalid', issues: ISSUES_FOR.invalid }
+              : { status: 'valid', issues: [] },
+            total: body.invoice.total,
+          })
+        }),
+      )
+      const { user } = renderReview()
+      const total = screen.getByLabelText('Total')
+
+      await user.clear(total)
+      await user.type(total, '1')
+      await waitFor(() => {
+        expect(calls).toBe(1)
+      })
+      await user.type(total, '160')
+
+      await waitFor(() => {
+        expect(calls).toBe(2)
+      })
+      await waitFor(() => {
+        expect(present(useInvoicesStore.getState().invoices[0]).validation.status).toBe('valid')
+      })
+      await new Promise((resolve) => setTimeout(resolve, 400))
+      expect(present(useInvoicesStore.getState().invoices[0]).validation.status).toBe('valid')
+    })
+
+    it('tells the user when the numbers could not be checked', async () => {
+      server.use(http.post('*/api/v1/invoices/validate', () => HttpResponse.error()))
+      const { user } = renderReview()
+
+      await user.type(screen.getByLabelText('Total'), '0')
+
+      expect(
+        await screen.findByText(/No se pudo conectar|conexión/, {}, { timeout: 2000 }),
+      ).toBeInTheDocument()
     })
   })
 })

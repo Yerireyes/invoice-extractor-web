@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { NativeSelect } from '@/components/ui/native-select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useMediaQuery } from '@/lib/use-media-query'
+import { reviewStatus } from '@/store/invoices'
+import { useLiveValidation } from '../hooks/use-live-validation'
 import { useActiveInvoice } from '../hooks/use-active-invoice'
 import { issuerLabel } from '../lib/labels'
 import { BatchList } from './BatchList'
@@ -19,6 +21,7 @@ export function ReviewPage() {
   const { t } = useTranslation()
   const isDesktop = useMediaQuery(DESKTOP)
   const { invoices, active, index, select, previous, next } = useActiveInvoice()
+  useLiveValidation()
 
   if (!active) return <EmptyReview />
 
@@ -129,7 +132,7 @@ function MobilePicker({
         >
           {invoices.map((entry, index) => (
             <option key={entry.id} value={entry.id}>
-              {`${String(index + 1)}. ${issuerLabel(t, entry)} · ${t(`validationStatus.${entry.validation.status}`)}`}
+              {`${String(index + 1)}. ${issuerLabel(t, entry)} · ${t(`validationStatus.${reviewStatus(entry)}`)}`}
             </option>
           ))}
         </NativeSelect>

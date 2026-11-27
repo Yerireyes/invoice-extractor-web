@@ -1,5 +1,16 @@
 import { normalizeInvoice } from '@/lib/api-models'
-import { needsCheck, useInvoicesStore, type BatchInvoice } from './invoices'
+import {
+  needsCheck,
+  reviewItems,
+  reviewStatus,
+  useInvoicesStore,
+  type BatchInvoice,
+} from './invoices'
+
+function present<T>(value: T | undefined): T {
+  if (value === undefined) throw new Error('expected value is missing')
+  return value
+}
 
 const entry = (id: string, previewUrl: string | null = `blob:${id}`): BatchInvoice => ({
   id,
@@ -83,5 +94,56 @@ describe('invoices store', () => {
     expect(revoke).toHaveBeenCalledWith('blob:c')
     expect(revoke).toHaveBeenCalledTimes(2)
     expect(useInvoicesStore.getState().invoices).toEqual([])
+  })
+
+  it('ignores a validation that answers about numbers that changed meanwhile', () => {
+    useInvoicesStore.getState().add([entry('a')])
+    const sent = present(useInvoicesStore.getState().invoices[0]).invoice
+    useInvoicesStore.getState().updateInvoice('a', { ...sent, total: '10.00' })
+
+    useInvoicesStore.getState().setValidation('a', sent, { status: 'invalid', issues: [] })
+    expect(present(useInvoicesStore.getState().invoices[0]).validation.status).toBe('valid')
+
+    const latest = present(useInvoicesStore.getState().invoices[0]).invoice
+    useInvoicesStore.getState().setValidation('a', latest, { status: 'invalid', issues: [] })
+    expect(present(useInvoicesStore.getState().invoices[0]).validation.status).toBe('invalid')
+  })
+})
+
+describe('review status', () => {
+  const lowConfidence = {
+    code: 'LOW_CONFIDENCE' as const,
+    severity: 'warning' as const,
+    field: 'total',
+    params: { confidence: 0.5 },
+  }
+
+  it('derives doubts from field confidence instead of LOW_CONFIDENCE issues', () => {
+    const invoice: BatchInvoice = {
+      ...entry('a'),
+      validation: { status: 'warnings', issues: [lowConfidence] },
+      fieldConfidence: { total: 0.5, issue_date: 0.95 },
+    }
+    expect(reviewItems(invoice)).toEqual({
+      issues: [],
+      doubts: [{ field: 'total', confidence: 0.5 }],
+    })
+    expect(reviewStatus(invoice)).toBe('warnings')
+    expect(reviewStatus({ ...invoice, confirmedFields: ['total'] })).toBe('valid')
+  })
+
+  it('is invalid with any error and keeps warnings from the backend', () => {
+    const base = entry('a')
+    const issue = (severity: 'error' | 'warning' | 'info') => ({
+      code: 'FUTURE_DATE' as const,
+      severity,
+      field: 'issue_date',
+      params: {},
+    })
+    const status = (severity: 'error' | 'warning' | 'info') =>
+      reviewStatus({ ...base, validation: { status: 'valid', issues: [issue(severity)] } })
+    expect(status('error')).toBe('invalid')
+    expect(status('warning')).toBe('warnings')
+    expect(status('info')).toBe('valid')
   })
 })
