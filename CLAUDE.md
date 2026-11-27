@@ -229,6 +229,7 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 | FRT-EXP-0010 | `feat/export/frt-exp-0010` | hecha |
 | FRT-APP-0011 | `feat/app/frt-app-0011` | en curso |
 | FRT-DEP-0012 | `chore/deploy/frt-dep-0012` | pendiente |
+| FRT-APP-0013 | `feat/app/frt-app-0013` | pendiente |
 
 ### FRT-APP-0001 — Estructura base del proyecto
 *Como desarrollador quiero un proyecto base funcional para construir sobre él.*
@@ -316,3 +317,10 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 - `deploy.yml` en **`release: published`**: `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod` con los secretos `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`; `VITE_API_URL` = URL pública del backend (llega por el buzón).
 - Smoke test: la URL de producción responde 200.
 - Documentar en el README los pasos manuales: crear el proyecto en Vercel, variables de entorno y secretos de GitHub. Avisar al backend por el buzón la URL de producción (para `ALLOWED_ORIGINS`).
+
+### FRT-APP-0013 — Página de inicio prerenderizada
+*Como usuario con un móvil y mala conexión quiero ver la página al instante, sin esperar a que cargue toda la app.*
+- Prerenderizar `/` en el build (React en el servidor de Vite) y servir ese HTML; hidratar en el cliente (`hydrateRoot`).
+- Coherente con el idioma (es/en) y el tema elegidos: sin parpadeos ni errores de hidratación visibles.
+- Funciona con y sin mocks; Docker/nginx y Vercel sirven el HTML prerenderizado.
+- Lighthouse móvil ≥ 90 en Performance (hoy 83; escritorio 100), manteniendo Accessibility 100.
