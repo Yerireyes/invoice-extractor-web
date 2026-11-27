@@ -1,11 +1,25 @@
 import { ReceiptTextIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, Outlet } from 'react-router'
+import { Link, Outlet, useMatches } from 'react-router'
+import { cn } from '@/lib/utils'
 import { LanguageSwitcher } from './LanguageSwitcher'
+
+/** What a route can ask of the shell through its `handle`. */
+export interface RouteHandle {
+  /** Full-width work screen instead of the centred reading column. */
+  wide?: boolean
+  /** Route-specific navigation shown in the header next to the product name. */
+  headerNav?: ReactNode
+}
+
+const handleOf = (value: unknown): RouteHandle =>
+  typeof value === 'object' && value !== null ? value : {}
 
 // Header and shell. Theme toggle, footer and privacy link arrive in FRT-APP-0011.
 export function RootLayout() {
   const { t } = useTranslation()
+  const handle = handleOf(useMatches().at(-1)?.handle)
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
@@ -15,8 +29,13 @@ export function RootLayout() {
       >
         {t('app.skipToContent')}
       </a>
-      <header className="border-b">
-        <div className="mx-auto flex h-16 w-full max-w-[66rem] items-center justify-between gap-4 px-4 sm:px-6">
+      <header className="h-16 border-b">
+        <div
+          className={cn(
+            'mx-auto flex h-full w-full items-center gap-4 px-4 sm:px-6',
+            handle.wide ? 'max-w-none' : 'max-w-[66rem]',
+          )}
+        >
           <Link
             to="/"
             className="-ml-1 flex items-center gap-2 rounded-md px-1 py-1 text-[0.9375rem] font-semibold tracking-tight"
@@ -28,7 +47,10 @@ export function RootLayout() {
             />
             {t('app.name')}
           </Link>
-          <LanguageSwitcher />
+          {handle.headerNav}
+          <div className="ml-auto">
+            <LanguageSwitcher />
+          </div>
         </div>
       </header>
       <main id="main" tabIndex={-1} className="flex-1 outline-none">

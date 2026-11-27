@@ -201,5 +201,88 @@
       "retryNow": "Ya puedes volver a intentarlo.",
       "demo": "Modo demo: el servidor devuelve facturas de ejemplo, no lee tus archivos de verdad."
     }
+  },
+  "review": {
+    "pageTitle": "Revisar facturas",
+    "nav": {
+      "back": "Subir facturas",
+      "count_one": "{{count}} factura",
+      "count_other": "{{count}} facturas",
+      "label": "Ruta"
+    },
+    "batch": {
+      "heading": "Lote",
+      "add": "Añadir",
+      "listLabel": "Facturas del lote",
+      "valid_one": "{{count}} válida",
+      "valid_other": "{{count}} válidas",
+      "warnings_one": "{{count}} con advertencias",
+      "warnings_other": "{{count}} con advertencias",
+      "invalid_one": "{{count}} con errores",
+      "invalid_other": "{{count}} con errores",
+      "noTotal": "Sin total",
+      "noIssuer": "Emisor sin nombre",
+      "privacy": "Las facturas solo viven en esta pestaña. Si la cierras, se borran."
+    },
+    "viewer": {
+      "label": "Factura original",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "fit": "Ajustar",
+      "zoom": "Zoom",
+      "imageAlt": "Imagen original de {{name}}",
+      "pdfTitle": "PDF original de {{name}}",
+      "pdfFallback": "Tu navegador no puede mostrar el PDF aquí.",
+      "openPdf": "Abrir el PDF en otra pestaña"
+    },
+    "panel": {
+      "position": "{{current}} de {{total}}",
+      "previous": "Factura anterior",
+      "next": "Factura siguiente",
+      "nextCta": "Siguiente factura",
+      "saved": "Los cambios se guardan en esta sesión",
+      "picker": "Factura a revisar",
+      "numberLabel": "N.º"
+    },
+    "tabs": {
+      "label": "Vista",
+      "image": "Imagen",
+      "data": "Datos"
+    },
+    "sections": {
+      "general": "Datos generales",
+      "issuer": "Emisor",
+      "recipient": "Receptor",
+      "payment": "Pago y notas"
+    },
+    "party": {
+      "name": "Nombre",
+      "tax_id": "ID fiscal",
+      "tax_id_type": "Tipo de ID fiscal",
+      "address": "Dirección",
+      "email": "Correo",
+      "phone": "Teléfono"
+    },
+    "select": {
+      "currency": "Elige una moneda",
+      "country": "Sin país"
+    },
+    "confidence": {
+      "hint": "La IA no está segura de este dato ({{percent}} de confianza). Compáralo con la imagen original.",
+      "confirm": "Es correcto",
+      "confirmLabel": "Marcar «{{field}}» como correcto",
+      "confirmed": "Marcado como correcto."
+    },
+    "errors": {
+      "tooLong": "Es demasiado largo.",
+      "date": "Usa una fecha válida.",
+      "country": "Usa el código de 2 letras del país.",
+      "required": "Este dato es obligatorio."
+    },
+    "empty": {
+      "title": "Todavía no hay facturas para revisar",
+      "body": "Sube tus facturas y vuelve aquí para revisar lo que leyó la IA.",
+      "action": "Subir facturas"
+    }
   }
 }

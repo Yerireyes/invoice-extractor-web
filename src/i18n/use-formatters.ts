@@ -14,7 +14,11 @@ export function useFormatters() {
     const locale = resolveIntlLocale(language)
     return {
       locale,
-      money: (value: string, currency: string) => formatMoney(value, currency, locale),
+      money: (
+        value: string,
+        currency: string,
+        options?: { currencyDisplay?: 'symbol' | 'narrowSymbol' | 'code' },
+      ) => formatMoney(value, currency, locale, options),
       date: (value: string, style?: Intl.DateTimeFormatOptions['dateStyle']) =>
         formatDate(value, locale, style),
       percent: (value: number | string, options?: { ratio?: boolean }) =>

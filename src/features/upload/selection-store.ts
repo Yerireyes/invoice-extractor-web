@@ -7,7 +7,7 @@ import { checkFiles, type Candidate, type SelectionProblem } from './lib/selecti
 export interface SelectedFile {
   id: string
   file: File
-  /** Object URL for image thumbnails; revoked when the file leaves the selection. */
+  /** Object URL of the original (images and PDFs) for thumbnails and the review viewer; revoked when the file leaves. */
   previewUrl: string | null
   /** Client-side validation problem: the file is never sent. */
   problem: SelectionProblem | null
@@ -36,8 +36,10 @@ interface SelectionState {
 let nextId = 0
 const newId = () => `file-${String(++nextId)}`
 
+const PREVIEWABLE = /^(image\/|application\/pdf$)/
+
 function createPreview(file: File): string | null {
-  if (!file.type.startsWith('image/') || typeof URL.createObjectURL !== 'function') return null
+  if (!PREVIEWABLE.test(file.type) || typeof URL.createObjectURL !== 'function') return null
   return URL.createObjectURL(file)
 }
 
