@@ -2,7 +2,11 @@
   "app": {
     "name": "Invoice Extractor",
     "skipToContent": "Skip to content",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "waking": {
+      "title": "Waking up the server…",
+      "body": "The free service sleeps when nobody uses it; the first answer can take up to a minute."
+    }
   },
   "language": {
     "label": "Language",

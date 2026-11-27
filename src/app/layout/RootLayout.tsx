@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { ThemeSwitcher } from '../theme/ThemeSwitcher'
 import { Footer } from './Footer'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { ServerWakeNotice } from './ServerWakeNotice'
 
 /** What a route can ask of the shell through its `handle`. */
 export interface RouteHandle {
@@ -61,6 +62,7 @@ export function RootLayout() {
           </div>
         </div>
       </header>
+      <ServerWakeNotice />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
