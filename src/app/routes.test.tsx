@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-router'
 import { Providers } from './providers'
 import { routes } from './router'
 
@@ -43,5 +43,36 @@ describe('routes', () => {
 
     await screen.findByRole('heading', { level: 1 })
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument()
+  })
+
+  it('shows a calm error page when a route fails to render', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const broken: RouteObject[] = [
+      {
+        path: '/',
+        element: routes[0]?.element,
+        errorElement: routes[0]?.errorElement,
+        children: [
+          {
+            index: true,
+            Component: () => {
+              throw new Error('boom')
+            },
+          },
+        ],
+      },
+    ]
+    const router = createMemoryRouter(broken, { initialEntries: ['/'] })
+    render(
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>,
+    )
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Algo salió mal' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Volver a cargar' })).toBeInTheDocument()
+    spy.mockRestore()
   })
 })

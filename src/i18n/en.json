@@ -386,5 +386,10 @@
     "title": "This page doesn’t exist",
     "body": "There is nothing at “{{path}}”. The link may be mistyped or out of date.",
     "action": "Back to uploading invoices"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "body": "The page failed to load. Invoices you were reviewing may have been lost: reload and try again.",
+    "reload": "Reload"
   }
 }

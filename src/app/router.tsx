@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from 'react-router'
 import { UploadPage } from '@/features/upload'
 import { RootLayout, type RouteHandle } from './layout/RootLayout'
+import { ErrorPage } from './ErrorPage'
 import { NotFoundPage } from './NotFoundPage'
 import { RouteLoading } from './RouteLoading'
 
@@ -8,6 +9,7 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <ErrorPage />,
     children: [
       // The landing page ships in the main bundle; review and export load when first needed.
       { index: true, element: <UploadPage /> },
