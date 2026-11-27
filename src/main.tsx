@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import { App } from '@/app/App'
+import i18n from '@/i18n'
 import '@/index.css'
 
 async function enableMocking() {
@@ -14,10 +15,16 @@ async function enableMocking() {
 const root = document.getElementById('root')
 if (!root) throw new Error('Root element #root not found')
 
+const app = (
+  <StrictMode>
+    <App />
+  </StrictMode>
+)
+
 void enableMocking().then(() => {
-  createRoot(root).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  )
+  // index.html put the prerendered page in #root (scripts/prerender.mjs) when it had one for this
+  // path; hydrate it if it is in the language i18n resolved, otherwise render from scratch.
+  const prerendered = root.dataset.prerendered
+  if (prerendered && prerendered === i18n.resolvedLanguage) hydrateRoot(root, app)
+  else createRoot(root).render(app)
 })
