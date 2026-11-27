@@ -75,7 +75,8 @@ src/
 ├── i18n/
 │   ├── es.json
 │   └── en.json
-└── main.tsx
+├── entry-server.tsx           # prerender de "/" en el build (lo usa scripts/prerender.mjs)
+└── main.tsx                   # hidrata "/" si viene prerenderizada; si no, render en el cliente
 openapi/openapi.json           # copia versionada del contrato del backend
 ```
 
@@ -87,6 +88,7 @@ Reglas:
 - **Privacidad**: las facturas viven **solo en memoria** (Zustand sin persistencia). Las imágenes originales se muestran con `URL.createObjectURL` y se liberan con `revokeObjectURL`.
 - Accesibilidad: navegación completa con teclado, labels en todos los campos, contraste AA, `aria-live` para progreso y errores.
 - Responsive desde 360 px. Modo claro/oscuro.
+- **Prerender de `/`** (FRT-APP-0013): `npm run build` genera el HTML de la página de inicio en `es` y `en` y React lo hidrata. Lo que se renderiza en `/` (layout incluido) debe salir igual en el servidor y en el primer render del cliente: lo que dependa del navegador (`localStorage`, `matchMedia`, `window`) va detrás de `useHydrated()` o se resuelve con CSS (p. ej. `dark:`). Un test (`src/entry-server.test.tsx`) falla si la hidratación no cuadra.
 
 ## Contrato
 
