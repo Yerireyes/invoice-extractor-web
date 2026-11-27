@@ -111,9 +111,12 @@ function exportHandler(kind: 'excel' | 'pdf') {
 
   return http.post(api(`/exports/${kind}`), async ({ request }) => {
     const body = (await request.json()) as Partial<ExportRequest> | null
-    if (!body || !Array.isArray(body.invoices) || !body.options) {
+    // `options` is optional (the API applies defaults); an empty list is rejected.
+    if (!body || !Array.isArray(body.invoices) || body.invoices.length === 0) {
       return problem(422, 'VALIDATION_ERROR', {
-        errors: [{ loc: ['body', 'options'], msg: 'Field required', type: 'missing' }],
+        errors: [
+          { loc: ['body', 'invoices'], msg: 'List should have at least 1 item', type: 'too_short' },
+        ],
       })
     }
     const max = meta.limits.max_invoices_per_export

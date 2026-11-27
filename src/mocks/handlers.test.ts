@@ -145,6 +145,24 @@ describe('mock /exports', () => {
       code: 'VALIDATION_ERROR',
     })
   })
+
+  it('rejects an empty list of invoices', async () => {
+    const body: ExportRequest = { invoices: [] }
+    await expect(apiFetch('/exports/excel', { method: 'POST', json: body })).rejects.toMatchObject({
+      status: 422,
+      code: 'VALIDATION_ERROR',
+    })
+  })
+
+  it('applies default options when they are omitted', async () => {
+    const body: ExportRequest = { invoices: [{ ...invoiceEur, source_file_name: 'factura.jpg' }] }
+    const response = await apiRequest('/exports/excel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    expect(response.ok).toBe(true)
+  })
 })
 
 describe('mock /health', () => {
