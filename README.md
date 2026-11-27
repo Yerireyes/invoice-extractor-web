@@ -8,6 +8,29 @@ Es el frontend de [`invoice-extractor-api`](https://github.com/Yerireyes/invoice
 
 > Proyecto de portafolio: UI accesible y responsive, tests y CI/CD.
 
+![Flujo completo: subir facturas de ejemplo, extraer, corregir el total y exportar](docs/screenshots/flujo.gif)
+
+## Capturas
+
+| Subir                                                                            | Revisar                                                                                              |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| ![Página de inicio con la zona para soltar facturas](docs/screenshots/subir.png) | ![Revisión: lote, imagen original y datos con el panel «Por revisar»](docs/screenshots/revision.png) |
+| **Exportar**                                                                     | **Modo oscuro**                                                                                      |
+| ![Panel de exportación a Excel o PDF](docs/screenshots/exportar.png)             | ![La revisión en modo oscuro](docs/screenshots/revision-oscuro.png)                                  |
+
+<p align="center"><img src="docs/screenshots/movil.png" width="300" alt="Revisión en el móvil, con selector de factura y pestañas Imagen / Datos"></p>
+
+Las facturas de las capturas son ficticias (modo mock).
+
+## Qué hace
+
+- **Subir**: arrastra o elige fotos y PDFs; se validan tipo, tamaño y cantidad antes de enviarlos.
+- **Revisar**: la imagen original al lado del formulario; los datos dudosos de la IA se marcan en ámbar y se confirman en su sitio.
+- **Corregir**: datos generales, conceptos e impuestos en tablas editables; los importes se escriben como en tu idioma.
+- **Validar en vivo**: tras cada cambio el backend revisa que los números cuadren; «Por revisar» explica cada problema y lleva al campo.
+- **Exportar**: Excel o PDF, en español o inglés, de todo el lote o de las facturas que elijas.
+- Español e inglés, modo claro/oscuro/sistema, navegación completa con teclado y diseño desde 360 px.
+
 ## Stack
 
 | Propósito             | Herramienta                                       |
