@@ -338,5 +338,31 @@
         "info_other": "{{count}} notas"
       }
     }
+  },
+  "export": {
+    "trigger": "Exportar",
+    "title": "Exportar facturas",
+    "format": "Formato",
+    "formats": {
+      "excel": "Excel",
+      "pdf": "PDF"
+    },
+    "language": "Idioma del archivo",
+    "include": "Incluir",
+    "includeLines": "Conceptos de cada factura",
+    "includeAlerts": "Alertas de validación",
+    "invoices": "Facturas",
+    "scopeAll_one": "Todo el lote ({{count}} factura)",
+    "scopeAll_other": "Todo el lote ({{count}} facturas)",
+    "scopeSome": "Elegir facturas",
+    "withErrors_one": "{{count}} factura tiene errores sin corregir. Se exportará tal como está.",
+    "withErrors_other": "{{count}} facturas tienen errores sin corregir. Se exportarán tal como están.",
+    "noneChosen": "Elige al menos una factura.",
+    "submit_one": "Exportar {{count}} factura",
+    "submit_other": "Exportar {{count}} facturas",
+    "anyway_one": "Exportar de todos modos",
+    "anyway_other": "Exportar de todos modos",
+    "working": "Generando el archivo…",
+    "done": "Descargado: {{filename}}"
   }
 }
