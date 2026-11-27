@@ -244,4 +244,110 @@ describe('ReviewPage', () => {
       expect(panelHeading()).toHaveTextContent('Estudio Ejemplo Diseño S.L.')
     })
   })
+
+  describe('line items, taxes and totals', () => {
+    const stored = () => present(useInvoicesStore.getState().invoices[0]).invoice
+    const plain = (text: string) => text.replace(/\s/g, ' ')
+
+    beforeEach(() => {
+      useInvoicesStore
+        .getState()
+        .add([
+          entry('mx', invoiceMxn, 'invalid', { fieldConfidence: { 'line_items.0.amount': 0.55 } }),
+        ])
+    })
+
+    it('shows the lines, taxes and totals with the currency format', () => {
+      renderReview()
+
+      expect(screen.getByLabelText('Descripción (concepto 1)')).toHaveValue(
+        'Servicio de consultoría',
+      )
+      expect(screen.getByLabelText('Cantidad (concepto 1)')).toHaveValue('2')
+      expect(screen.getByLabelText('Precio unitario (concepto 1)')).toHaveValue('500,00')
+      expect(screen.getByLabelText('% de impuesto (concepto 1)')).toHaveValue('16')
+      expect(screen.getByLabelText('Impuesto (impuesto 1)')).toHaveValue('IVA')
+      expect(screen.getByLabelText('Base (impuesto 1)')).toHaveValue('1000,00')
+      expect(screen.getByLabelText('Subtotal')).toHaveValue('1000,00')
+      expect(screen.getByLabelText('Total')).toHaveValue('1150,00')
+      expect(screen.getByText('1 línea')).toBeInTheDocument()
+    })
+
+    it('reads amounts typed with either separator and keeps the API format in the store', async () => {
+      const { user } = renderReview()
+      const total = screen.getByLabelText('Total')
+
+      await user.clear(total)
+      await user.type(total, '1.160,5')
+      expect(stored().total).toBe('1160.5')
+      await user.tab()
+      expect(plain((total as HTMLInputElement).value)).toBe('1160,50')
+
+      await user.clear(total)
+      await user.type(total, '1,160.00')
+      expect(stored().total).toBe('1160.00')
+    })
+
+    it('flags text that is not a number and keeps the last valid amount', async () => {
+      const { user } = renderReview()
+      const subtotal = screen.getByLabelText('Subtotal')
+
+      await user.type(subtotal, ' mil')
+
+      expect(subtotal).toHaveAttribute('aria-invalid', 'true')
+      expect(subtotal).toHaveAccessibleDescription('Escribe un número, por ejemplo 1234,50.')
+      expect(stored().subtotal).toBe('1000.00')
+    })
+
+    it('adds and removes line items and taxes', async () => {
+      const { user } = renderReview()
+
+      await user.click(screen.getByRole('button', { name: 'Agregar concepto' }))
+      expect(screen.getByLabelText('Descripción (concepto 2)')).toHaveFocus()
+      await user.keyboard('Envío')
+      expect(stored().line_items).toHaveLength(2)
+      expect(stored().line_items[1]?.description).toBe('Envío')
+      expect(screen.getByText('2 líneas')).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Eliminar el concepto 1' }))
+      expect(stored().line_items.map((line) => line.description)).toEqual(['Envío'])
+      expect(screen.getByLabelText('Descripción (concepto 1)')).toHaveValue('Envío')
+
+      await user.click(screen.getByRole('button', { name: 'Eliminar el impuesto 1' }))
+      expect(stored().taxes).toEqual([])
+      expect(screen.getByText('Esta factura no tiene impuestos.')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Agregar impuesto' })).toHaveFocus()
+
+      await user.click(screen.getByRole('button', { name: 'Agregar impuesto' }))
+      expect(screen.getByLabelText('Impuesto (impuesto 1)')).toHaveFocus()
+      expect(stored().taxes).toHaveLength(1)
+    })
+
+    it('explains a doubtful cell and lets the user confirm it', async () => {
+      const { user } = renderReview()
+      const amount = screen.getByLabelText('Importe (concepto 1)')
+
+      expect(amount).toHaveAccessibleDescription(
+        /Importe: La IA no está segura de este dato \(55\s%/,
+      )
+      await user.click(
+        screen.getByRole('button', { name: 'Marcar «Importe (concepto 1)» como correcto' }),
+      )
+
+      expect(amount).not.toHaveAccessibleDescription()
+      expect(amount).toHaveFocus()
+      expect(present(useInvoicesStore.getState().invoices[0]).confirmedFields).toEqual([
+        'line_items.0.amount',
+      ])
+    })
+
+    it('forgets the doubt of a removed line instead of moving it to the next one', async () => {
+      const { user } = renderReview()
+      await user.click(screen.getByRole('button', { name: 'Agregar concepto' }))
+      await user.click(screen.getByRole('button', { name: 'Eliminar el concepto 1' }))
+
+      expect(screen.queryByRole('button', { name: /como correcto/ })).not.toBeInTheDocument()
+      expect(present(useInvoicesStore.getState().invoices[0]).fieldConfidence).toEqual({})
+    })
+  })
 })

@@ -19,6 +19,13 @@ export function translateApiError(t: TFunction, error: unknown): string {
   const countParam = HTTP_COUNT_PARAMS[code]
   const count = countParam ? asNumber(params[countParam]) : undefined
 
+  // The daily cap of the demo service resets at midnight (Pacific): hours away, so "tomorrow"
+  // reads better than a count of seconds; minutes when it is less than an hour.
+  if (code === 'LLM_QUOTA_EXCEEDED' && count !== undefined && count >= 60) {
+    if (count >= 3600) return t('errors.LLM_QUOTA_EXCEEDED_daily')
+    return t('errors.LLM_QUOTA_EXCEEDED_minutes', { count: Math.ceil(count / 60) })
+  }
+
   return t([`errors.${code}`, 'errors.generic'], count === undefined ? {} : { count })
 }
 

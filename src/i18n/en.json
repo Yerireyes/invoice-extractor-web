@@ -32,6 +32,9 @@
     "TOO_MANY_INVOICES_other": "You can export at most {{count}} invoices at a time. Select fewer.",
     "LLM_QUOTA_EXCEEDED_one": "The AI service quota is used up. Try again in {{count}} second.",
     "LLM_QUOTA_EXCEEDED_other": "The AI service quota is used up. Try again in {{count}} seconds.",
+    "LLM_QUOTA_EXCEEDED_daily": "The demo service has reached its daily limit. Try again tomorrow.",
+    "LLM_QUOTA_EXCEEDED_minutes_one": "The AI service quota is used up. Try again in {{count}} minute.",
+    "LLM_QUOTA_EXCEEDED_minutes_other": "The AI service quota is used up. Try again in {{count}} minutes.",
     "LLM_UNAVAILABLE_one": "The AI service isn't responding. Try again in {{count}} second.",
     "LLM_UNAVAILABLE_other": "The AI service isn't responding. Try again in {{count}} seconds."
   },
@@ -253,6 +256,9 @@
       "general": "General details",
       "issuer": "Issuer",
       "recipient": "Recipient",
+      "lines": "Line items",
+      "taxes": "Taxes",
+      "totals": "Totals",
       "payment": "Payment and notes"
     },
     "party": {
@@ -277,12 +283,45 @@
       "tooLong": "It's too long.",
       "date": "Use a valid date.",
       "country": "Use the 2-letter country code.",
-      "required": "This field is required."
+      "required": "This field is required.",
+      "amount": "Enter a number, for example 1,234.50."
     },
     "empty": {
       "title": "No invoices to review yet",
       "body": "Upload your invoices and come back here to check what the AI read.",
       "action": "Upload invoices"
+    },
+    "lines": {
+      "count_one": "{{count}} line",
+      "count_other": "{{count}} lines",
+      "add": "Add line item",
+      "remove": "Remove line item {{number}}",
+      "empty": "This invoice has no line items.",
+      "columns": {
+        "description": "Description",
+        "quantity": "Qty",
+        "unit_price": "Unit price",
+        "discount": "Disc.",
+        "tax_rate": "Tax %",
+        "amount": "Amount"
+      }
+    },
+    "taxes": {
+      "count_one": "{{count}} tax",
+      "count_other": "{{count}} taxes",
+      "add": "Add tax",
+      "remove": "Remove tax {{number}}",
+      "empty": "This invoice has no taxes.",
+      "columns": {
+        "name": "Tax",
+        "rate": "Rate %",
+        "base": "Base",
+        "amount": "Amount"
+      }
+    },
+    "rows": {
+      "actions": "Actions",
+      "note": "{{field}}: {{message}}"
     }
   }
 }

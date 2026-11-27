@@ -111,9 +111,12 @@ function exportHandler(kind: 'excel' | 'pdf') {
 
   return http.post(api(`/exports/${kind}`), async ({ request }) => {
     const body = (await request.json()) as Partial<ExportRequest> | null
-    if (!body || !Array.isArray(body.invoices) || !body.options) {
+    // `options` is optional (the API applies defaults); an empty list is rejected.
+    if (!body || !Array.isArray(body.invoices) || body.invoices.length === 0) {
       return problem(422, 'VALIDATION_ERROR', {
-        errors: [{ loc: ['body', 'options'], msg: 'Field required', type: 'missing' }],
+        errors: [
+          { loc: ['body', 'invoices'], msg: 'List should have at least 1 item', type: 'too_short' },
+        ],
       })
     }
     const max = meta.limits.max_invoices_per_export
@@ -156,7 +159,10 @@ export const handlers = [
     if (MOCK_TRIGGERS.rateLimited.test(names)) {
       return problem(429, 'RATE_LIMITED', { retry_after_s: 30 }, { 'Retry-After': '30' })
     }
-    if (MOCK_TRIGGERS.quota.test(names)) return problem(503, 'LLM_QUOTA_EXCEEDED')
+    // The daily cap: retry_after_s counts the hours until the reset.
+    if (MOCK_TRIGGERS.quota.test(names)) {
+      return problem(503, 'LLM_QUOTA_EXCEEDED', { retry_after_s: 5 * 3600 })
+    }
     if (MOCK_TRIGGERS.unavailable.test(names)) return problem(503, 'LLM_UNAVAILABLE')
 
     await latency(900 + 600 * files.length)

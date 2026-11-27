@@ -129,6 +129,68 @@
         }
       }
     },
+    "/api/v1/exports/excel": {
+      "post": {
+        "tags": [
+          "exports"
+        ],
+        "summary": "Exporta facturas a Excel (.xlsx)",
+        "operationId": "export_excel_api_v1_exports_excel_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Archivo generado (`Content-Disposition: attachment`)",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Content Too Large",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/invoices/extract": {
       "post": {
         "tags": [
@@ -176,6 +238,16 @@
               }
             }
           },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -197,76 +269,6 @@
             }
           }
         }
-      }
-    },
-    "/api/v1/exports/excel": {
-      "post": {
-        "operationId": "exportExcel",
-        "summary": "Invoices → .xlsx",
-        "tags": [
-          "exports"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExportRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "File download (Content-Disposition: attachment; filename=…)",
-            "headers": {
-              "Content-Disposition": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Invalid request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Rate limited",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal error",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        },
-        "x-provisional": true
       }
     },
     "/api/v1/exports/pdf": {
@@ -403,12 +405,249 @@
         "title": "ErrorCode",
         "description": "Códigos de error HTTP del contrato (sección 5)."
       },
+      "ExportInvoice": {
+        "properties": {
+          "document_type": {
+            "$ref": "#/components/schemas/DocumentType",
+            "default": "invoice"
+          },
+          "invoice_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Number"
+          },
+          "issue_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issue Date",
+            "description": "Obligatorio (validación)."
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10,
+                "minLength": 1,
+                "description": "ISO 4217 (p. ej. `MXN`). Si no es válido, la validación lo marca."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "description": "Obligatorio (validación)."
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "ISO 3166-1 alfa-2 (p. ej. `MX`)."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "ISO 639-1 (p. ej. `es`)."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "issuer": {
+            "$ref": "#/components/schemas/Party"
+          },
+          "recipient": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Party"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "line_items": {
+            "items": {
+              "$ref": "#/components/schemas/LineItem"
+            },
+            "type": "array",
+            "title": "Line Items"
+          },
+          "subtotal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?\\d{1,15}(\\.\\d{1,6})?$",
+                "examples": [
+                  "1234.50"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtotal"
+          },
+          "discount_total": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?\\d{1,15}(\\.\\d{1,6})?$",
+                "examples": [
+                  "1234.50"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Total"
+          },
+          "taxes": {
+            "items": {
+              "$ref": "#/components/schemas/Tax"
+            },
+            "type": "array",
+            "title": "Taxes"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?\\d{1,15}(\\.\\d{1,6})?$",
+                "examples": [
+                  "1234.50"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total",
+            "description": "Obligatorio (validación)."
+          },
+          "payment_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "source_file_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source File Name",
+            "description": "Nombre del archivo original (el de `/extract`)."
+          }
+        },
+        "type": "object",
+        "title": "ExportInvoice",
+        "description": "Factura a exportar. `source_file_name` (opcional) rellena la columna *Archivo*."
+      },
       "ExportLanguage": {
         "type": "string",
         "enum": [
           "es",
           "en"
         ]
+      },
+      "ExportOptions": {
+        "properties": {
+          "language": {
+            "$ref": "#/components/schemas/ExportLanguage",
+            "default": "es"
+          },
+          "include_line_items": {
+            "type": "boolean",
+            "title": "Include Line Items",
+            "default": true
+          },
+          "include_alerts": {
+            "type": "boolean",
+            "title": "Include Alerts",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "ExportOptions"
+      },
+      "ExportRequest": {
+        "properties": {
+          "invoices": {
+            "items": {
+              "$ref": "#/components/schemas/ExportInvoice"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Invoices"
+          },
+          "options": {
+            "$ref": "#/components/schemas/ExportOptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "invoices"
+        ],
+        "title": "ExportRequest"
       },
       "ExtractResponse": {
         "properties": {
@@ -1295,45 +1534,6 @@
           "warnings",
           "invalid"
         ]
-      },
-      "ExportOptions": {
-        "type": "object",
-        "required": [
-          "language",
-          "include_line_items",
-          "include_alerts"
-        ],
-        "properties": {
-          "language": {
-            "$ref": "#/components/schemas/ExportLanguage"
-          },
-          "include_line_items": {
-            "type": "boolean"
-          },
-          "include_alerts": {
-            "type": "boolean"
-          }
-        },
-        "x-provisional": true
-      },
-      "ExportRequest": {
-        "type": "object",
-        "required": [
-          "invoices",
-          "options"
-        ],
-        "properties": {
-          "invoices": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Invoice"
-            }
-          },
-          "options": {
-            "$ref": "#/components/schemas/ExportOptions"
-          }
-        },
-        "x-provisional": true
       }
     }
   }

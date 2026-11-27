@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/exports/excel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Exporta facturas a Excel (.xlsx) */
+        post: operations["export_excel_api_v1_exports_excel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/invoices/extract": {
         parameters: {
             query?: never;
@@ -66,23 +83,6 @@ export interface paths {
         put?: never;
         /** Sube 1..N facturas (imágenes o PDF) y devuelve sus datos extraídos y validados */
         post: operations["extract_api_v1_invoices_extract_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/exports/excel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Invoices → .xlsx */
-        post: operations["exportExcel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -128,8 +128,79 @@ export interface components {
          * @enum {string}
          */
         ErrorCode: "TOO_MANY_FILES" | "NO_FILES" | "TOO_MANY_INVOICES" | "VALIDATION_ERROR" | "PROVIDER_NOT_AVAILABLE" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "REQUEST_TOO_LARGE" | "RATE_LIMITED" | "LLM_QUOTA_EXCEEDED" | "LLM_UNAVAILABLE" | "INTERNAL_ERROR";
+        /**
+         * ExportInvoice
+         * @description Factura a exportar. `source_file_name` (opcional) rellena la columna *Archivo*.
+         */
+        ExportInvoice: {
+            /** @default invoice */
+            document_type: components["schemas"]["DocumentType"];
+            /** Invoice Number */
+            invoice_number?: string | null;
+            /**
+             * Issue Date
+             * @description Obligatorio (validación).
+             */
+            issue_date?: string | null;
+            /** Due Date */
+            due_date?: string | null;
+            /**
+             * Currency
+             * @description Obligatorio (validación).
+             */
+            currency?: string | null;
+            /** Country */
+            country?: string | null;
+            /** Language */
+            language?: string | null;
+            issuer?: components["schemas"]["Party"];
+            recipient?: components["schemas"]["Party"] | null;
+            /** Line Items */
+            line_items?: components["schemas"]["LineItem"][];
+            /** Subtotal */
+            subtotal?: string | null;
+            /** Discount Total */
+            discount_total?: string | null;
+            /** Taxes */
+            taxes?: components["schemas"]["Tax"][];
+            /**
+             * Total
+             * @description Obligatorio (validación).
+             */
+            total?: string | null;
+            /** Payment Method */
+            payment_method?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Source File Name
+             * @description Nombre del archivo original (el de `/extract`).
+             */
+            source_file_name?: string | null;
+        };
         /** @enum {string} */
         ExportLanguage: "es" | "en";
+        /** ExportOptions */
+        ExportOptions: {
+            /** @default es */
+            language: components["schemas"]["ExportLanguage"];
+            /**
+             * Include Line Items
+             * @default true
+             */
+            include_line_items: boolean;
+            /**
+             * Include Alerts
+             * @default true
+             */
+            include_alerts: boolean;
+        };
+        /** ExportRequest */
+        ExportRequest: {
+            /** Invoices */
+            invoices: components["schemas"]["ExportInvoice"][];
+            options?: components["schemas"]["ExportOptions"];
+        };
         /** ExtractResponse */
         ExtractResponse: {
             /** Results */
@@ -427,15 +498,6 @@ export interface components {
         };
         /** @enum {string} */
         ValidationStatus: "valid" | "warnings" | "invalid";
-        ExportOptions: {
-            language: components["schemas"]["ExportLanguage"];
-            include_line_items: boolean;
-            include_alerts: boolean;
-        };
-        ExportRequest: {
-            invoices: components["schemas"]["Invoice"][];
-            options: components["schemas"]["ExportOptions"];
-        };
     };
     responses: never;
     parameters: never;
@@ -554,6 +616,57 @@ export interface operations {
             };
         };
     };
+    export_excel_api_v1_exports_excel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportRequest"];
+            };
+        };
+        responses: {
+            /** @description Archivo generado (`Content-Disposition: attachment`) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
     extract_api_v1_invoices_extract_post: {
         parameters: {
             query?: never;
@@ -594,6 +707,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
             /** @description Internal Server Error */
             500: {
                 headers: {
@@ -605,58 +727,6 @@ export interface operations {
             };
             /** @description Service Unavailable */
             503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
-                };
-            };
-        };
-    };
-    exportExcel: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ExportRequest"];
-            };
-        };
-        responses: {
-            /** @description File download (Content-Disposition: attachment; filename=…) */
-            200: {
-                headers: {
-                    "Content-Disposition"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": string;
-                };
-            };
-            /** @description Invalid request */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
-                };
-            };
-            /** @description Rate limited */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["ProblemDetails"];
-                };
-            };
-            /** @description Internal error */
-            500: {
                 headers: {
                     [name: string]: unknown;
                 };

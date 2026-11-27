@@ -32,6 +32,9 @@
     "TOO_MANY_INVOICES_other": "Puedes exportar como máximo {{count}} facturas a la vez. Selecciona menos.",
     "LLM_QUOTA_EXCEEDED_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundo.",
     "LLM_QUOTA_EXCEEDED_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} segundos.",
+    "LLM_QUOTA_EXCEEDED_daily": "Se alcanzó el límite diario del servicio de demostración. Vuelve a intentarlo mañana.",
+    "LLM_QUOTA_EXCEEDED_minutes_one": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} minuto.",
+    "LLM_QUOTA_EXCEEDED_minutes_other": "Se agotó la cuota del servicio de IA. Vuelve a intentarlo en {{count}} minutos.",
     "LLM_UNAVAILABLE_one": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundo.",
     "LLM_UNAVAILABLE_other": "El servicio de IA no responde. Vuelve a intentarlo en {{count}} segundos."
   },
@@ -253,6 +256,9 @@
       "general": "Datos generales",
       "issuer": "Emisor",
       "recipient": "Receptor",
+      "lines": "Conceptos",
+      "taxes": "Impuestos",
+      "totals": "Totales",
       "payment": "Pago y notas"
     },
     "party": {
@@ -277,12 +283,45 @@
       "tooLong": "Es demasiado largo.",
       "date": "Usa una fecha válida.",
       "country": "Usa el código de 2 letras del país.",
-      "required": "Este dato es obligatorio."
+      "required": "Este dato es obligatorio.",
+      "amount": "Escribe un número, por ejemplo 1234,50."
     },
     "empty": {
       "title": "Todavía no hay facturas para revisar",
       "body": "Sube tus facturas y vuelve aquí para revisar lo que leyó la IA.",
       "action": "Subir facturas"
+    },
+    "lines": {
+      "count_one": "{{count}} línea",
+      "count_other": "{{count}} líneas",
+      "add": "Agregar concepto",
+      "remove": "Eliminar el concepto {{number}}",
+      "empty": "Esta factura no tiene conceptos.",
+      "columns": {
+        "description": "Descripción",
+        "quantity": "Cant.",
+        "unit_price": "Precio unit.",
+        "discount": "Desc.",
+        "tax_rate": "% imp.",
+        "amount": "Importe"
+      }
+    },
+    "taxes": {
+      "count_one": "{{count}} impuesto",
+      "count_other": "{{count}} impuestos",
+      "add": "Agregar impuesto",
+      "remove": "Eliminar el impuesto {{number}}",
+      "empty": "Esta factura no tiene impuestos.",
+      "columns": {
+        "name": "Impuesto",
+        "rate": "Tasa %",
+        "base": "Base",
+        "amount": "Importe"
+      }
+    },
+    "rows": {
+      "actions": "Acciones",
+      "note": "{{field}}: {{message}}"
     }
   }
 }
