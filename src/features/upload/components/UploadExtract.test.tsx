@@ -66,7 +66,9 @@ describe('Upload → extract', () => {
     await user.upload(input(), [png('factura.png')])
     await user.click(screen.getByRole('button', { name: 'Extraer datos (1)' }))
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Enviando tus facturas…')
+    // The header has its own status region (server wake-up notice); find the progress one.
+    const progress = (await screen.findByText(/Enviando tus facturas…/)).closest('[role="status"]')
+    expect(progress).toHaveTextContent('Enviando tus facturas…')
     expect(
       screen.getByRole('progressbar', { name: 'Progreso de la extracción' }),
     ).toBeInTheDocument()
