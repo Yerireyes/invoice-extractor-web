@@ -89,7 +89,7 @@ export function BatchList({
                   </span>
                   <span className="shrink-0 text-sm tabular-nums">
                     {invoice.total && invoice.currency
-                      ? money(invoice.total, invoice.currency)
+                      ? money(invoice.total, invoice.currency, { currencyDisplay: 'narrowSymbol' })
                       : t('review.batch.noTotal')}
                   </span>
                 </span>

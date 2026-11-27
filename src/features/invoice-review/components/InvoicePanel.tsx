@@ -14,6 +14,8 @@ interface InvoicePanelProps {
   total: number
   onPrevious?: () => void
   onNext?: () => void
+  /** Position and prev/next in the header; off on mobile, where the picker already has them. */
+  showNavigation?: boolean
   className?: string
 }
 
@@ -23,16 +25,12 @@ export function InvoicePanel({
   total,
   onPrevious,
   onNext,
+  showNavigation = true,
   className,
 }: InvoicePanelProps) {
   const { t } = useTranslation()
   const { date } = useFormatters()
   const { invoice } = entry
-  const facts = [
-    t(`documentType.${invoice.document_type}`),
-    invoice.invoice_number ? t('review.panel.number', { number: invoice.invoice_number }) : null,
-    invoice.issue_date ? date(invoice.issue_date) : null,
-  ].filter(Boolean)
 
   return (
     <section
@@ -47,35 +45,47 @@ export function InvoicePanel({
           >
             {issuerLabel(t, entry)}
           </h2>
-          <div className="flex shrink-0 items-center gap-1">
-            <span className="mr-1 text-xs text-muted-foreground tabular-nums">
-              {t('review.panel.position', { current: index + 1, total })}
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onPrevious}
-              disabled={!onPrevious}
-              aria-label={t('review.panel.previous')}
-            >
-              <ChevronUpIcon aria-hidden="true" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onNext}
-              disabled={!onNext}
-              aria-label={t('review.panel.next')}
-            >
-              <ChevronDownIcon aria-hidden="true" />
-            </Button>
-          </div>
+          {showNavigation && (
+            <div className="flex shrink-0 items-center gap-1">
+              <span className="mr-1 text-xs text-muted-foreground tabular-nums">
+                {t('review.panel.position', { current: index + 1, total })}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onPrevious}
+                disabled={!onPrevious}
+                aria-label={t('review.panel.previous')}
+              >
+                <ChevronUpIcon aria-hidden="true" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onNext}
+                disabled={!onNext}
+                aria-label={t('review.panel.next')}
+              >
+                <ChevronDownIcon aria-hidden="true" />
+              </Button>
+            </div>
+          )}
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted-foreground">
           <StatusBadge status={entry.validation.status} />
-          <span>{facts.join(' · ')}</span>
+          <span>
+            {t(`documentType.${invoice.document_type}`)}
+            {invoice.invoice_number && (
+              <>
+                {' · '}
+                {t('review.panel.numberLabel')}{' '}
+                <span className="font-mono">{invoice.invoice_number}</span>
+              </>
+            )}
+            {invoice.issue_date && ` · ${date(invoice.issue_date)}`}
+          </span>
         </div>
       </header>
 

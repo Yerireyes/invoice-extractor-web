@@ -242,7 +242,7 @@
       "nextCta": "Siguiente factura",
       "saved": "Los cambios se guardan en esta sesión",
       "picker": "Factura a revisar",
-      "number": "N.º {{number}}"
+      "numberLabel": "N.º"
     },
     "tabs": {
       "label": "Vista",

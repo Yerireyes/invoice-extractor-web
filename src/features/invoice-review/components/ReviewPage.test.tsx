@@ -224,6 +224,9 @@ describe('ReviewPage', () => {
       const { user } = renderReview()
 
       expect(screen.getByRole('tab', { name: 'Datos' })).toHaveAttribute('aria-selected', 'true')
+      // The picker already navigates; the panel does not repeat it on mobile
+      expect(screen.queryByText('1 de 3')).not.toBeInTheDocument()
+      expect(screen.getAllByRole('button', { name: 'Factura siguiente' })).toHaveLength(1)
       expect(screen.getByLabelText('Número de factura')).toBeInTheDocument()
       expect(screen.queryByRole('img', { name: /Imagen original/ })).not.toBeInTheDocument()
 

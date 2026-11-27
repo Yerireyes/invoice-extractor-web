@@ -12,12 +12,19 @@ export function isDecimalString(value: unknown): value is `${number}` {
  * "1160.00" + "MXN" + "es-MX" → "$1,160.00". Falls back to a plain number plus the code when the
  * currency is not valid ISO 4217, and to the raw value when it is not a decimal string.
  */
-export function formatMoney(value: string, currency: string, locale: string): string {
+export function formatMoney(
+  value: string,
+  currency: string,
+  locale: string,
+  { currencyDisplay }: { currencyDisplay?: 'symbol' | 'narrowSymbol' | 'code' } = {},
+): string {
   const amount = value.trim()
   if (!isDecimalString(amount)) return value
 
   try {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
+    return new Intl.NumberFormat(locale, { style: 'currency', currency, currencyDisplay }).format(
+      amount,
+    )
   } catch {
     const number = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 2,

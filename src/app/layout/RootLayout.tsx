@@ -29,10 +29,10 @@ export function RootLayout() {
       >
         {t('app.skipToContent')}
       </a>
-      <header className="border-b">
+      <header className="h-16 border-b">
         <div
           className={cn(
-            'mx-auto flex h-16 w-full items-center gap-4 px-4 sm:px-6',
+            'mx-auto flex h-full w-full items-center gap-4 px-4 sm:px-6',
             handle.wide ? 'max-w-none' : 'max-w-[66rem]',
           )}
         >

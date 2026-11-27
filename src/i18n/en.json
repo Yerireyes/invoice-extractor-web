@@ -242,7 +242,7 @@
       "nextCta": "Next invoice",
       "saved": "Changes are kept for this session",
       "picker": "Invoice to review",
-      "number": "No. {{number}}"
+      "numberLabel": "No."
     },
     "tabs": {
       "label": "View",

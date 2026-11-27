@@ -22,8 +22,9 @@ export function ReviewPage() {
 
   if (!active) return <EmptyReview />
 
-  const panel = (
+  const panel = (showNavigation: boolean) => (
     <InvoicePanel
+      showNavigation={showNavigation}
       entry={active}
       index={index}
       total={invoices.length}
@@ -54,7 +55,7 @@ export function ReviewPage() {
             <BatchList invoices={invoices} activeId={active.id} onSelect={select} />
           </div>
           <InvoiceViewer key={active.id} entry={active} className="min-h-0 border-r" />
-          {panel}
+          {panel(true)}
         </div>
       ) : (
         <div className="flex flex-col">
@@ -89,7 +90,7 @@ export function ReviewPage() {
               <InvoiceViewer key={active.id} entry={active} className="h-[75dvh] border-y" />
             </TabsContent>
             <TabsContent value="data" className="mt-3 border-t">
-              {panel}
+              {panel(false)}
             </TabsContent>
           </Tabs>
         </div>
