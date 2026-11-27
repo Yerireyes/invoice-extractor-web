@@ -253,6 +253,9 @@
       "general": "Datos generales",
       "issuer": "Emisor",
       "recipient": "Receptor",
+      "lines": "Conceptos",
+      "taxes": "Impuestos",
+      "totals": "Totales",
       "payment": "Pago y notas"
     },
     "party": {
@@ -277,12 +280,45 @@
       "tooLong": "Es demasiado largo.",
       "date": "Usa una fecha válida.",
       "country": "Usa el código de 2 letras del país.",
-      "required": "Este dato es obligatorio."
+      "required": "Este dato es obligatorio.",
+      "amount": "Escribe un número, por ejemplo 1234,50."
     },
     "empty": {
       "title": "Todavía no hay facturas para revisar",
       "body": "Sube tus facturas y vuelve aquí para revisar lo que leyó la IA.",
       "action": "Subir facturas"
+    },
+    "lines": {
+      "count_one": "{{count}} línea",
+      "count_other": "{{count}} líneas",
+      "add": "Agregar concepto",
+      "remove": "Eliminar el concepto {{number}}",
+      "empty": "Esta factura no tiene conceptos.",
+      "columns": {
+        "description": "Descripción",
+        "quantity": "Cant.",
+        "unit_price": "Precio unit.",
+        "discount": "Desc.",
+        "tax_rate": "% imp.",
+        "amount": "Importe"
+      }
+    },
+    "taxes": {
+      "count_one": "{{count}} impuesto",
+      "count_other": "{{count}} impuestos",
+      "add": "Agregar impuesto",
+      "remove": "Eliminar el impuesto {{number}}",
+      "empty": "Esta factura no tiene impuestos.",
+      "columns": {
+        "name": "Impuesto",
+        "rate": "Tasa %",
+        "base": "Base",
+        "amount": "Importe"
+      }
+    },
+    "rows": {
+      "actions": "Acciones",
+      "note": "{{field}}: {{message}}"
     }
   }
 }

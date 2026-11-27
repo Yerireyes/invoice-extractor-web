@@ -22,6 +22,8 @@ interface FieldProps {
   /** AI confidence 0..1 when the field still needs checking; omitted otherwise. */
   lowConfidence?: number
   onConfirm?: () => void
+  /** Label at the left and control at the right, as in a column of totals. */
+  inline?: boolean
   className?: string
   children: ReactElement<ControlProps>
 }
@@ -36,6 +38,7 @@ export function Field({
   error,
   lowConfidence,
   onConfirm,
+  inline = false,
   className,
   children,
 }: FieldProps) {
@@ -61,11 +64,18 @@ export function Field({
   })
 
   return (
-    <div className={cn('min-w-0', className)}>
+    <div
+      className={cn(
+        'min-w-0',
+        inline && 'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4',
+        className,
+      )}
+    >
       <Label
         htmlFor={id}
         className={cn(
-          'mb-1.5 text-[0.8125rem] font-normal text-muted-foreground',
+          'text-[0.8125rem] font-normal text-muted-foreground',
+          !inline && 'mb-1.5',
           unsure && 'text-warning',
         )}
       >
@@ -91,13 +101,25 @@ export function Field({
       </div>
 
       {unsure && (
-        <p id={confidenceId} className="mt-1.5 flex items-start gap-1.5 text-xs text-warning">
+        <p
+          id={confidenceId}
+          className={cn(
+            'mt-1.5 flex items-start gap-1.5 text-xs text-warning',
+            inline && 'col-span-2 justify-end',
+          )}
+        >
           <TriangleAlertIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
           {t('review.confidence.hint', { percent: percent(lowConfidence, { ratio: true }) })}
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1.5 flex items-start gap-1.5 text-xs text-destructive">
+        <p
+          id={errorId}
+          className={cn(
+            'mt-1.5 flex items-start gap-1.5 text-xs text-destructive',
+            inline && 'col-span-2 justify-end',
+          )}
+        >
           <CircleAlertIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
           {t(error)}
         </p>
