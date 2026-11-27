@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Yerireyes/invoice-extractor-web/compare/v1.0.0...v1.1.0) (2026-11-27)
+
+
+### Funcionalidades
+
+* **app:** página de inicio prerenderizada [FRT-APP-0013] ([#16](https://github.com/Yerireyes/invoice-extractor-web/issues/16)) ([38dfd0e](https://github.com/Yerireyes/invoice-extractor-web/commit/38dfd0e7beb3125e5219a2f9efce841206d07758))
+
 ## 1.0.0 (2026-11-27)
 
 
