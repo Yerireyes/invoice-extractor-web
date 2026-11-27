@@ -228,8 +228,9 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 | FRT-REV-0009 | `feat/invoice-review/frt-rev-0009` | hecha |
 | FRT-EXP-0010 | `feat/export/frt-exp-0010` | hecha |
 | FRT-APP-0011 | `feat/app/frt-app-0011` | hecha |
-| FRT-DEP-0012 | `chore/deploy/frt-dep-0012` | en curso |
+| FRT-DEP-0012 | `chore/deploy/frt-dep-0012` | hecha |
 | FRT-APP-0013 | `feat/app/frt-app-0013` | pendiente |
+| FRT-DEP-0014 | `fix/deploy/frt-dep-0014` | en curso |
 
 ### FRT-APP-0001 — Estructura base del proyecto
 *Como desarrollador quiero un proyecto base funcional para construir sobre él.*
