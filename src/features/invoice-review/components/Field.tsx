@@ -24,6 +24,8 @@ interface FieldProps {
   onConfirm?: () => void
   /** Label at the left and control at the right, as in a column of totals. */
   inline?: boolean
+  /** Ink, medium-weight label: the one field that sums up a group, such as the total. */
+  emphasis?: boolean
   className?: string
   children: ReactElement<ControlProps>
 }
@@ -39,6 +41,7 @@ export function Field({
   lowConfidence,
   onConfirm,
   inline = false,
+  emphasis = false,
   className,
   children,
 }: FieldProps) {
@@ -76,6 +79,7 @@ export function Field({
         className={cn(
           'text-[0.8125rem] font-normal text-muted-foreground',
           !inline && 'mb-1.5',
+          emphasis && 'text-sm font-medium text-foreground',
           unsure && 'text-warning',
         )}
       >

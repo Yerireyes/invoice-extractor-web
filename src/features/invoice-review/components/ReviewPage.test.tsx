@@ -335,6 +335,7 @@ describe('ReviewPage', () => {
       )
 
       expect(amount).not.toHaveAccessibleDescription()
+      expect(amount).toHaveFocus()
       expect(present(useInvoicesStore.getState().invoices[0]).confirmedFields).toEqual([
         'line_items.0.amount',
       ])

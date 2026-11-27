@@ -18,6 +18,10 @@ type FieldName = FieldPath<InvoiceFormValues>
 // TanStack Table keeps the row and column model (stable row ids from the field array); the
 // markup, inputs and accessibility are ours.
 const features = tableFeatures({})
+
+/** Borderless cell look for wide tables on fine pointers (keeps the green edge on focus). */
+const SHEET_CELL =
+  '@min-[30rem]/rows:pointer-fine:border-transparent @min-[30rem]/rows:pointer-fine:bg-transparent @min-[30rem]/rows:pointer-fine:dark:bg-transparent @min-[30rem]/rows:hover:border-input @min-[30rem]/rows:focus-visible:border-ring'
 const columnHelper = createColumnHelper<typeof features, { id: string }>()
 
 export interface RowColumn {
@@ -102,11 +106,10 @@ export function RowsEditor({
       'aria-invalid': error ? true : undefined,
       'aria-describedby': error || unsure ? noteId(rowId, column.key) : undefined,
       className: cn(
-        'h-9 px-2',
-        // Spreadsheet cells in the table: the edge shows on hover and focus only.
-        !error &&
-          !unsure &&
-          '@min-[30rem]/rows:border-transparent @min-[30rem]/rows:bg-transparent @min-[30rem]/rows:hover:border-input @min-[30rem]/rows:dark:bg-transparent',
+        'h-10 px-3 @min-[30rem]/rows:h-9 @min-[30rem]/rows:px-2',
+        // Spreadsheet cells in the table: with a mouse the edge shows on hover and focus only;
+        // touch screens keep it, since there is no hover to reveal that the cell is editable.
+        !error && !unsure && SHEET_CELL,
         unsure && !error && 'border-warning/70 bg-warning-surface dark:bg-warning-surface',
       ),
     }
@@ -137,7 +140,10 @@ export function RowsEditor({
           {...shared}
           rows={1}
           maxLength={LONG_TEXT_MAX}
-          className={cn(shared.className, 'h-auto min-h-9 resize-none py-1.5')}
+          className={cn(
+            shared.className,
+            'h-auto min-h-10 resize-none py-2 @min-[30rem]/rows:h-auto @min-[30rem]/rows:min-h-9 @min-[30rem]/rows:py-1.5',
+          )}
         />
       )
     }
@@ -176,8 +182,11 @@ export function RowsEditor({
                       key={header.id}
                       scope="col"
                       className={cn(
-                        'px-2 pb-2 text-xs font-normal text-muted-foreground',
-                        numeric(column) ? 'text-right' : 'text-left',
+                        'pb-2 text-xs font-normal whitespace-nowrap text-muted-foreground',
+                        // Same edge as the value in the cell below (2px cell + 1px border + 8px).
+                        numeric(column)
+                          ? 'pr-[0.6875rem] pl-0 text-right'
+                          : 'px-[0.6875rem] text-left',
                         column.width,
                       )}
                     >
@@ -234,12 +243,13 @@ export function RowsEditor({
                     <Button
                       type="button"
                       variant="outline"
-                      size="sm"
                       onClick={() => {
                         useInvoicesStore.getState().confirmField(entry.id, name)
+                        // The note (and this button) goes away: keep focus on the checked cell.
+                        form.setFocus(name)
                       }}
                       aria-label={t('review.confidence.confirmLabel', { field: label })}
-                      className="gap-1.5 bg-card"
+                      className="h-11 gap-1.5 bg-card pointer-fine:h-10"
                     >
                       <CheckIcon aria-hidden="true" />
                       {t('review.confidence.confirm')}
@@ -278,7 +288,7 @@ export function RowsEditor({
                       </td>
                     )
                   })}
-                  <td className="col-start-6 row-start-1 flex justify-end self-start @min-[30rem]/rows:table-cell @min-[30rem]/rows:py-1.5 @min-[30rem]/rows:align-top">
+                  <td className="col-start-6 row-start-1 flex justify-end self-start pt-5 @min-[30rem]/rows:table-cell @min-[30rem]/rows:py-1.5 @min-[30rem]/rows:align-top">
                     <Button
                       type="button"
                       variant="ghost"
@@ -288,7 +298,7 @@ export function RowsEditor({
                         removeRow(row.index)
                       }}
                       aria-label={text.remove(row.index + 1)}
-                      className="size-9 text-muted-foreground hover:text-foreground"
+                      className="size-11 text-muted-foreground hover:text-foreground pointer-fine:size-9"
                     >
                       <XIcon aria-hidden="true" />
                     </Button>
@@ -298,7 +308,7 @@ export function RowsEditor({
                   <tr className="block @min-[30rem]/rows:table-row">
                     <td
                       colSpan={columns.length + 1}
-                      className="block pt-3 text-xs @min-[30rem]/rows:table-cell @min-[30rem]/rows:px-2 @min-[30rem]/rows:pt-0 @min-[30rem]/rows:pb-3"
+                      className="block pt-3 text-xs @min-[30rem]/rows:table-cell @min-[30rem]/rows:px-[0.6875rem] @min-[30rem]/rows:pt-0 @min-[30rem]/rows:pb-3"
                     >
                       <div className="grid gap-2">{notes}</div>
                     </td>
@@ -318,7 +328,7 @@ export function RowsEditor({
           append(emptyRow())
           onRowsChange()
         }}
-        className="mt-3 -ml-2 h-9 gap-1.5 px-2 text-primary hover:text-primary"
+        className="mt-3 -ml-2 h-11 gap-1.5 px-2 text-primary hover:text-primary pointer-fine:h-9"
       >
         <PlusIcon aria-hidden="true" />
         {text.add}

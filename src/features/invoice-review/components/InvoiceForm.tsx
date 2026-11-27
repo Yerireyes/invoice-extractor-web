@@ -66,6 +66,8 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
     needsCheck(entry, name) ? entry.fieldConfidence[name] : undefined
   const confirm = (name: FieldName) => () => {
     useInvoicesStore.getState().confirmField(entry.id, name)
+    // The button goes away with the doubt: keep focus on the checked field.
+    form.setFocus(name)
   }
   const errorOf = (name: FieldName) => form.getFieldState(name, formState).error?.message
   const fieldProps = (name: FieldName, label: string) => ({
@@ -109,7 +111,7 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
       header: t('review.lines.columns.unit_price'),
       label: t('fields.line_items.unit_price'),
       kind: 'money',
-      width: 'w-[5.25rem]',
+      width: 'w-[5.5rem]',
       card: 'col-span-2',
     },
     {
@@ -117,7 +119,7 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
       header: t('review.lines.columns.discount'),
       label: t('fields.line_items.discount'),
       kind: 'money',
-      width: 'w-[4.5rem]',
+      width: 'w-16',
       card: 'col-span-2',
     },
     {
@@ -133,7 +135,7 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
       header: t('review.lines.columns.amount'),
       label: t('fields.line_items.amount'),
       kind: 'money',
-      width: 'w-[5.5rem]',
+      width: 'w-[6.5rem]',
       card: 'col-span-4',
     },
   ]
@@ -181,7 +183,7 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
       control={control}
       name={name}
       render={({ field }) => (
-        <Field {...fieldProps(name, t(`fields.${name}`))} inline>
+        <Field {...fieldProps(name, t(`fields.${name}`))} inline emphasis={emphasis}>
           <DecimalInput
             ref={field.ref}
             name={field.name}
@@ -190,7 +192,17 @@ export function InvoiceForm({ entry }: { entry: BatchInvoice }) {
             onBlur={field.onBlur}
             currency={currencyCode}
             suffix={emphasis ? (currencyCode ?? undefined) : undefined}
-            className={cn('w-40 sm:w-44', emphasis && 'h-11 text-base font-medium md:text-base')}
+            className={cn(
+              'w-40 sm:w-44',
+              // Figures end on the same edge as the total's, which leaves room for its code.
+              !emphasis && currencyCode && 'pr-12',
+              emphasis
+                ? 'h-11 text-base font-medium md:text-base'
+                : // Subtotal and discounts read as figures; only the total is a boxed field.
+                  !needsCheck(entry, name) &&
+                    !errorOf(name) &&
+                    'hover:border-input focus-visible:border-ring pointer-fine:border-transparent pointer-fine:bg-transparent pointer-fine:dark:bg-transparent',
+            )}
           />
         </Field>
       )}
