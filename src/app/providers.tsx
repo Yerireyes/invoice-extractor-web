@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import '@/i18n'
+import { useHydrated } from '@/lib/use-hydrated'
 import { createQueryClient } from './query-client'
 import { useThemeStore } from './theme/theme'
 
@@ -9,11 +10,13 @@ import { useThemeStore } from './theme/theme'
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient)
   const theme = useThemeStore((state) => state.resolved)
+  const hydrated = useHydrated()
 
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <Toaster position="bottom-right" theme={theme} richColors closeButton />
+      {/* Client only: nothing to prerender, and it reads the saved theme. */}
+      {hydrated && <Toaster position="bottom-right" theme={theme} richColors closeButton />}
     </QueryClientProvider>
   )
 }

@@ -374,7 +374,8 @@
     "label": "Tema: {{theme}}. Cambiar el tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Sistema"
+    "system": "Sistema",
+    "change": "Cambiar el tema"
   },
   "footer": {
     "privacy": "No almacenamos tus facturas: viven solo en esta pestaña y se envían únicamente para leer sus datos.",
