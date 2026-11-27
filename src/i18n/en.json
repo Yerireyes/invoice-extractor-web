@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Invoice Extractor",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "loading": "Loading…"
   },
   "language": {
     "label": "Language",
@@ -370,5 +371,16 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "footer": {
+    "privacy": "We don’t store your invoices: they live only in this tab and are sent just to read their data.",
+    "source": "Source on GitHub",
+    "newTab": "(opens in a new tab)",
+    "version": "Version"
+  },
+  "notFound": {
+    "title": "This page doesn’t exist",
+    "body": "There is nothing at “{{path}}”. The link may be mistyped or out of date.",
+    "action": "Back to uploading invoices"
   }
 }

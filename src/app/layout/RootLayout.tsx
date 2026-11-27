@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, Outlet, useMatches } from 'react-router'
 import { cn } from '@/lib/utils'
 import { ThemeSwitcher } from '../theme/ThemeSwitcher'
+import { Footer } from './Footer'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 /** What a route can ask of the shell through its `handle`. */
@@ -12,6 +13,8 @@ export interface RouteHandle {
   wide?: boolean
   /** Route-specific navigation shown in the header next to the product name. */
   headerNav?: ReactNode
+  /** False for full-height workspaces (review), which carry their own privacy note. */
+  footer?: boolean
   /** Actions at the right of the header, before the language switcher. */
   headerActions?: ReactNode
 }
@@ -61,6 +64,7 @@ export function RootLayout() {
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
+      {handle.footer !== false && <Footer />}
     </div>
   )
 }

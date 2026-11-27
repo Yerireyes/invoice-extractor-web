@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Invoice Extractor",
-    "skipToContent": "Saltar al contenido"
+    "skipToContent": "Saltar al contenido",
+    "loading": "Cargando…"
   },
   "language": {
     "label": "Idioma",
@@ -370,5 +371,16 @@
     "light": "Claro",
     "dark": "Oscuro",
     "system": "Sistema"
+  },
+  "footer": {
+    "privacy": "No almacenamos tus facturas: viven solo en esta pestaña y se envían únicamente para leer sus datos.",
+    "source": "Código en GitHub",
+    "newTab": "(se abre en otra pestaña)",
+    "version": "Versión"
+  },
+  "notFound": {
+    "title": "Esta página no existe",
+    "body": "No hay nada en «{{path}}». Puede que el enlace esté mal escrito o sea antiguo.",
+    "action": "Volver a subir facturas"
   }
 }

@@ -31,13 +31,15 @@ function entry(id: string, invoice: Invoice, issues: Issue[] = []): BatchInvoice
   }
 }
 
-function renderReview() {
+async function renderReview() {
   const router = createMemoryRouter(routes, { initialEntries: ['/review'] })
   render(
     <Providers>
       <RouterProvider router={router} />
     </Providers>,
   )
+  // /review is a lazy route: wait for its code before querying the page.
+  await screen.findByRole('heading', { level: 1 })
   return userEvent.setup()
 }
 
@@ -78,7 +80,7 @@ describe('ExportMenu', () => {
   it('exports the whole batch to Excel with the original file names', async () => {
     useInvoicesStore.getState().add([entry('mx', invoiceMxn), entry('es', invoiceEur)])
     const requests = captureExports()
-    const user = renderReview()
+    const user = await renderReview()
 
     const panel = await openPanel(user)
     expect(within(panel).getByRole('radio', { name: /Excel/ })).toBeChecked()
@@ -109,7 +111,7 @@ describe('ExportMenu', () => {
   it('exports chosen invoices to PDF with the chosen options', async () => {
     useInvoicesStore.getState().add([entry('mx', invoiceMxn), entry('es', invoiceEur)])
     const requests = captureExports()
-    const user = renderReview()
+    const user = await renderReview()
 
     const panel = await openPanel(user)
     await user.click(within(panel).getByRole('radio', { name: /PDF/ }))
@@ -137,7 +139,7 @@ describe('ExportMenu', () => {
     useInvoicesStore
       .getState()
       .add([entry('mx', invoiceMxn, [totalMismatch]), entry('es', invoiceEur)])
-    const user = renderReview()
+    const user = await renderReview()
 
     const panel = await openPanel(user)
     expect(
@@ -165,7 +167,7 @@ describe('ExportMenu', () => {
         ),
       ),
     )
-    const user = renderReview()
+    const user = await renderReview()
 
     const panel = await openPanel(user)
     await user.click(within(panel).getByRole('button', { name: 'Exportar 1 factura' }))
@@ -174,8 +176,8 @@ describe('ExportMenu', () => {
     expect(click).not.toHaveBeenCalled()
   })
 
-  it('is not offered when the batch is empty', () => {
-    renderReview()
+  it('is not offered when the batch is empty', async () => {
+    await renderReview()
     expect(screen.queryByRole('button', { name: 'Exportar' })).not.toBeInTheDocument()
   })
 })
