@@ -364,5 +364,11 @@
     "anyway_other": "Export anyway",
     "working": "Generating the file…",
     "done": "Downloaded: {{filename}}"
+  },
+  "theme": {
+    "label": "Theme: {{theme}}. Change the theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

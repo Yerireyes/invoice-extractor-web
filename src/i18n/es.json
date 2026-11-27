@@ -364,5 +364,11 @@
     "anyway_other": "Exportar de todos modos",
     "working": "Generando el archivo…",
     "done": "Descargado: {{filename}}"
+  },
+  "theme": {
+    "label": "Tema: {{theme}}. Cambiar el tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
   }
 }

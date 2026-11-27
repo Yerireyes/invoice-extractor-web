@@ -28,7 +28,11 @@ export function LanguageSwitcher() {
       >
         <SelectTrigger size="sm" aria-labelledby={labelId}>
           <LanguagesIcon aria-hidden="true" />
-          <SelectValue />
+          {/* On phones the code alone ("ES") keeps the header on one line. */}
+          <SelectValue>
+            <span className="sm:hidden">{current.toUpperCase()}</span>
+            <span className="hidden sm:inline">{t(`language.${current}`)}</span>
+          </SelectValue>
         </SelectTrigger>
         <SelectContent align="end">
           {SUPPORTED_LANGUAGES.map((language) => (

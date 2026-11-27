@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Outlet, useMatches } from 'react-router'
 import { cn } from '@/lib/utils'
+import { ThemeSwitcher } from '../theme/ThemeSwitcher'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 /** What a route can ask of the shell through its `handle`. */
@@ -52,6 +53,7 @@ export function RootLayout() {
           {handle.headerNav}
           <div className="ml-auto flex items-center gap-2">
             {handle.headerActions}
+            <ThemeSwitcher />
             <LanguageSwitcher />
           </div>
         </div>

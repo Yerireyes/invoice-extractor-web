@@ -13,11 +13,18 @@
     <meta name="theme-color" content="#121a16" media="(prefers-color-scheme: dark)" />
     <title>Invoice Extractor</title>
     <script>
-      // Apply the dark theme before first paint to avoid a flash. Manual toggle: FRT-APP-0011.
+      // Apply the theme before first paint to avoid a flash: the saved choice ('light' / 'dark',
+      // see src/app/theme/theme.ts) or else the system's, following it while the app loads.
       ;(function () {
         var media = window.matchMedia('(prefers-color-scheme: dark)')
         function apply() {
-          document.documentElement.classList.toggle('dark', media.matches)
+          var saved = null
+          try {
+            saved = localStorage.getItem('theme')
+          } catch (error) {}
+          var dark = saved === 'dark' || (saved !== 'light' && media.matches)
+          document.documentElement.classList.toggle('dark', dark)
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
         }
         apply()
         media.addEventListener('change', apply)
