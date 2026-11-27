@@ -165,7 +165,9 @@
       "removed": "Se quitó {{name}}.",
       "cleared": "Se vació la lista.",
       "statusReady": "Listo",
-      "statusSkipped": "No se enviará"
+      "statusSkipped": "No se enviará",
+      "statusReading": "Leyendo…",
+      "statusFailed": "No se leyó"
     },
     "problems": {
       "UNSUPPORTED_FILE_TYPE": "Formato no admitido. Usa {{formats}}.",
@@ -175,6 +177,29 @@
       "TOO_MANY_FILES_one": "Ya tienes {{count}} archivo, el máximo por envío. Quita alguno para añadir este.",
       "TOO_MANY_FILES_other": "Ya tienes {{count}} archivos, el máximo por envío. Quita alguno para añadir este.",
       "DUPLICATE_FILE": "Este archivo ya está en la lista."
+    },
+    "extract": {
+      "action_one": "Extraer datos ({{count}})",
+      "action_other": "Extraer datos ({{count}})",
+      "retry_one": "Volver a intentar ({{count}})",
+      "retry_other": "Volver a intentar ({{count}})",
+      "review_one": "Revisar {{count}} factura",
+      "review_other": "Revisar {{count}} facturas",
+      "readySummary_one": "{{count}} factura leída, lista para revisar.",
+      "readySummary_other": "{{count}} facturas leídas, listas para revisar.",
+      "progressLabel": "Progreso de la extracción",
+      "sending": "Enviando tus facturas…",
+      "uploading": "Subiendo {{loaded}} de {{total}}",
+      "reading_one": "La IA está leyendo {{count}} factura…",
+      "reading_other": "La IA está leyendo {{count}} facturas…",
+      "readingHint": "Suele tardar unos segundos por factura. No cierres esta página.",
+      "elapsed": "{{seconds}} s",
+      "resultPartial": "Se leyeron {{succeeded}} de {{total}}. Revisa los archivos que fallaron: puedes quitarlos o volver a intentarlo.",
+      "resultNone": "No se pudo leer ningún archivo. Revisa los motivos: puedes quitarlos o volver a intentarlo.",
+      "retryIn_one": "Podrás volver a intentarlo en {{count}} segundo.",
+      "retryIn_other": "Podrás volver a intentarlo en {{count}} segundos.",
+      "retryNow": "Ya puedes volver a intentarlo.",
+      "demo": "Modo demo: el servidor devuelve facturas de ejemplo, no lee tus archivos de verdad."
     }
   }
 }

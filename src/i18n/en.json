@@ -165,7 +165,9 @@
       "removed": "Removed {{name}}.",
       "cleared": "The list is now empty.",
       "statusReady": "Ready",
-      "statusSkipped": "Won’t be sent"
+      "statusSkipped": "Won’t be sent",
+      "statusReading": "Reading…",
+      "statusFailed": "Couldn't read"
     },
     "problems": {
       "UNSUPPORTED_FILE_TYPE": "Unsupported format. Use {{formats}}.",
@@ -175,6 +177,29 @@
       "TOO_MANY_FILES_one": "You already have {{count}} file, the limit per upload. Remove one to add this.",
       "TOO_MANY_FILES_other": "You already have {{count}} files, the limit per upload. Remove one to add this.",
       "DUPLICATE_FILE": "This file is already in the list."
+    },
+    "extract": {
+      "action_one": "Extract data ({{count}})",
+      "action_other": "Extract data ({{count}})",
+      "retry_one": "Try again ({{count}})",
+      "retry_other": "Try again ({{count}})",
+      "review_one": "Review {{count}} invoice",
+      "review_other": "Review {{count}} invoices",
+      "readySummary_one": "{{count}} invoice read and ready to review.",
+      "readySummary_other": "{{count}} invoices read and ready to review.",
+      "progressLabel": "Extraction progress",
+      "sending": "Sending your invoices…",
+      "uploading": "Uploading {{loaded}} of {{total}}",
+      "reading_one": "The AI is reading {{count}} invoice…",
+      "reading_other": "The AI is reading {{count}} invoices…",
+      "readingHint": "It usually takes a few seconds per invoice. Keep this page open.",
+      "elapsed": "{{seconds}} s",
+      "resultPartial": "{{succeeded}} of {{total}} were read. Check the files that failed: you can remove them or try again.",
+      "resultNone": "None of the files could be read. Check the reasons: you can remove them or try again.",
+      "retryIn_one": "You can try again in {{count}} second.",
+      "retryIn_other": "You can try again in {{count}} seconds.",
+      "retryNow": "You can try again now.",
+      "demo": "Demo mode: the server returns sample invoices; it doesn't really read your files."
     }
   }
 }
