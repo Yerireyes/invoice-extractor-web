@@ -102,7 +102,7 @@ export function InvoicePanel({
         </div>
       </header>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="relative min-h-0 flex-1 overflow-y-auto">
         <ReviewIssues entry={entry} onGoTo={goTo} />
         <InvoiceForm key={entry.id} entry={entry} />
 
