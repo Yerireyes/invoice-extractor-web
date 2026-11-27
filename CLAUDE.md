@@ -223,8 +223,8 @@ Estados: `pendiente` | `en curso` | `hecha`. Añade al final las historias nueva
 | FRT-LNG-0004 | `feat/i18n/frt-lng-0004` | hecha |
 | FRT-UPL-0005 | `feat/upload/frt-upl-0005` | hecha |
 | FRT-UPL-0006 | `feat/upload/frt-upl-0006` | hecha |
-| FRT-REV-0007 | `feat/invoice-review/frt-rev-0007` | en curso |
-| FRT-REV-0008 | `feat/invoice-review/frt-rev-0008` | pendiente |
+| FRT-REV-0007 | `feat/invoice-review/frt-rev-0007` | hecha |
+| FRT-REV-0008 | `feat/invoice-review/frt-rev-0008` | en curso |
 | FRT-REV-0009 | `feat/invoice-review/frt-rev-0009` | pendiente |
 | FRT-EXP-0010 | `feat/export/frt-exp-0010` | pendiente |
 | FRT-APP-0011 | `feat/app/frt-app-0011` | pendiente |
