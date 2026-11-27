@@ -1,7 +1,9 @@
 import { createBrowserRouter, type RouteObject } from 'react-router'
-import { ReviewPage } from '@/features/invoice-review'
+import { ReviewHeaderNav, ReviewPage } from '@/features/invoice-review'
 import { UploadPage } from '@/features/upload'
-import { RootLayout } from './layout/RootLayout'
+import { RootLayout, type RouteHandle } from './layout/RootLayout'
+
+const reviewHandle: RouteHandle = { wide: true, headerNav: <ReviewHeaderNav /> }
 
 export const routes: RouteObject[] = [
   {
@@ -9,7 +11,7 @@ export const routes: RouteObject[] = [
     element: <RootLayout />,
     children: [
       { index: true, element: <UploadPage /> },
-      { path: 'review', element: <ReviewPage /> },
+      { path: 'review', element: <ReviewPage />, handle: reviewHandle },
     ],
   },
 ]

@@ -201,5 +201,88 @@
       "retryNow": "You can try again now.",
       "demo": "Demo mode: the server returns sample invoices; it doesn't really read your files."
     }
+  },
+  "review": {
+    "pageTitle": "Review invoices",
+    "nav": {
+      "back": "Upload invoices",
+      "count_one": "{{count}} invoice",
+      "count_other": "{{count}} invoices",
+      "label": "Breadcrumb"
+    },
+    "batch": {
+      "heading": "Batch",
+      "add": "Add",
+      "listLabel": "Invoices in this batch",
+      "valid_one": "{{count}} valid",
+      "valid_other": "{{count}} valid",
+      "warnings_one": "{{count}} with warnings",
+      "warnings_other": "{{count}} with warnings",
+      "invalid_one": "{{count}} with errors",
+      "invalid_other": "{{count}} with errors",
+      "noTotal": "No total",
+      "noIssuer": "Unnamed issuer",
+      "privacy": "Invoices only live in this tab. If you close it, they're gone."
+    },
+    "viewer": {
+      "label": "Original invoice",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit",
+      "zoom": "Zoom",
+      "imageAlt": "Original image of {{name}}",
+      "pdfTitle": "Original PDF of {{name}}",
+      "pdfFallback": "Your browser can't show the PDF here.",
+      "openPdf": "Open the PDF in a new tab"
+    },
+    "panel": {
+      "position": "{{current}} of {{total}}",
+      "previous": "Previous invoice",
+      "next": "Next invoice",
+      "nextCta": "Next invoice",
+      "saved": "Changes are kept for this session",
+      "picker": "Invoice to review",
+      "number": "No. {{number}}"
+    },
+    "tabs": {
+      "label": "View",
+      "image": "Image",
+      "data": "Data"
+    },
+    "sections": {
+      "general": "General details",
+      "issuer": "Issuer",
+      "recipient": "Recipient",
+      "payment": "Payment and notes"
+    },
+    "party": {
+      "name": "Name",
+      "tax_id": "Tax ID",
+      "tax_id_type": "Tax ID type",
+      "address": "Address",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "select": {
+      "currency": "Choose a currency",
+      "country": "No country"
+    },
+    "confidence": {
+      "hint": "The AI isn't sure about this field ({{percent}} confidence). Check it against the original image.",
+      "confirm": "It's correct",
+      "confirmLabel": "Mark “{{field}}” as correct",
+      "confirmed": "Marked as correct."
+    },
+    "errors": {
+      "tooLong": "It's too long.",
+      "date": "Use a valid date.",
+      "country": "Use the 2-letter country code.",
+      "required": "This field is required."
+    },
+    "empty": {
+      "title": "No invoices to review yet",
+      "body": "Upload your invoices and come back here to check what the AI read.",
+      "action": "Upload invoices"
+    }
   }
 }
