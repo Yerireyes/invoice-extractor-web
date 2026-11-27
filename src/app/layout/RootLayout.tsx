@@ -11,6 +11,8 @@ export interface RouteHandle {
   wide?: boolean
   /** Route-specific navigation shown in the header next to the product name. */
   headerNav?: ReactNode
+  /** Actions at the right of the header, before the language switcher. */
+  headerActions?: ReactNode
 }
 
 const handleOf = (value: unknown): RouteHandle =>
@@ -38,7 +40,7 @@ export function RootLayout() {
         >
           <Link
             to="/"
-            className="-ml-1 flex items-center gap-2 rounded-md px-1 py-1 text-[0.9375rem] font-semibold tracking-tight"
+            className="-ml-1 flex items-center gap-2 rounded-md px-1 py-1 text-[0.9375rem] font-semibold tracking-tight whitespace-nowrap"
           >
             <ReceiptTextIcon
               aria-hidden="true"
@@ -48,7 +50,8 @@ export function RootLayout() {
             {t('app.name')}
           </Link>
           {handle.headerNav}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {handle.headerActions}
             <LanguageSwitcher />
           </div>
         </div>

@@ -8,7 +8,7 @@ import type { BatchInvoice } from '@/store/invoices'
 import { issuerLabel } from '../lib/labels'
 import { InvoiceForm } from './InvoiceForm'
 import { ReviewIssues } from './ReviewIssues'
-import { StatusBadge } from './StatusBadge'
+import { StatusBadge } from '@/components/status-badge'
 import { reviewStatus } from '@/store/invoices'
 
 interface InvoicePanelProps {

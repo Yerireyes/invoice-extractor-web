@@ -7,7 +7,7 @@ import type { ValidationStatus } from '@/lib/api-models'
 import { cn } from '@/lib/utils'
 import { reviewStatus, type BatchInvoice } from '@/store/invoices'
 import { issuerLabel } from '../lib/labels'
-import { StatusBadge } from './StatusBadge'
+import { StatusBadge } from '@/components/status-badge'
 
 const SUMMARY_TONE: Record<ValidationStatus, string> = {
   valid: 'text-success',

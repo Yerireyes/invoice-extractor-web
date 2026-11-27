@@ -338,5 +338,31 @@
         "info_other": "{{count}} notes"
       }
     }
+  },
+  "export": {
+    "trigger": "Export",
+    "title": "Export invoices",
+    "format": "Format",
+    "formats": {
+      "excel": "Excel",
+      "pdf": "PDF"
+    },
+    "language": "File language",
+    "include": "Include",
+    "includeLines": "Line items of each invoice",
+    "includeAlerts": "Validation alerts",
+    "invoices": "Invoices",
+    "scopeAll_one": "The whole batch ({{count}} invoice)",
+    "scopeAll_other": "The whole batch ({{count}} invoices)",
+    "scopeSome": "Choose invoices",
+    "withErrors_one": "{{count}} invoice has uncorrected errors. It will be exported as it is.",
+    "withErrors_other": "{{count}} invoices have uncorrected errors. They will be exported as they are.",
+    "noneChosen": "Choose at least one invoice.",
+    "submit_one": "Export {{count}} invoice",
+    "submit_other": "Export {{count}} invoices",
+    "anyway_one": "Export anyway",
+    "anyway_other": "Export anyway",
+    "working": "Generating the file…",
+    "done": "Downloaded: {{filename}}"
   }
 }
