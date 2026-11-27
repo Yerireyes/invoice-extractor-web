@@ -135,7 +135,7 @@ Formato: `<tipo>(<modulo>): <descripción en español, minúscula, sin punto fin
 ### Pull requests
 
 - Al terminar: `git push -u origin <rama>` y `gh pr create`.
-- Título: `[FRT-UPL-0005] feat(upload): zona para arrastrar y soltar archivos`
+- Título: `feat(upload): zona para arrastrar y soltar archivos [FRT-UPL-0005]`, siempre empezando por el tipo: con squash, el título es el commit que llega a `main`, y release-please solo lee commits convencionales (versión y CHANGELOG).
 - Cuerpo: qué se hizo, criterios de aceptación marcados, cómo probarlo, **capturas** si hay cambios visuales.
 - **No hagas merge sin la aprobación del usuario.** Merge con squash. Después: `git checkout main && git pull`, borra la rama local y marca la historia como `hecha`.
 
